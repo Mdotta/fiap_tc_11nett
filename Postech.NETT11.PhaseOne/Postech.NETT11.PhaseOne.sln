@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.NETT11.PhaseOne.WebApp", "Postech.NETT11.PhaseOne.WebApp\Postech.NETT11.PhaseOne.WebApp.csproj", "{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

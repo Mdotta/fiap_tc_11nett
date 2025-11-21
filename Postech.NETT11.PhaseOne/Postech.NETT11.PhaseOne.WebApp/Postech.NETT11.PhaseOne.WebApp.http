@@ -1,0 +1,6 @@
+@Postech.NETT11.PhaseOne.WebApp_HostAddress = http://localhost:5070
+
+GET http://localhost:5070/auth/ping
+Accept: application/json
+
+###
