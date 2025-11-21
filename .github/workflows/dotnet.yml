@@ -11,22 +11,22 @@ on:
 
 jobs:
   build:
-    env:
-      working-directory: ./Postech.NETT11.PhaseOne
     runs-on: ubuntu-latest
+    env:
+      WORKING_DIRECTORY: ./Postech.NETT11.PhaseOne
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+      
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
-      working-directory: ${{env.working-directory}}
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
     - name: Restore dependencies
-      working-directory: ${{env.working-directory}}
       run: dotnet restore
     - name: Build
-      working-directory: ${{env.working-directory}}
       run: dotnet build --no-restore
     - name: Test
-      working-directory: ${{env.working-directory}}
       run: dotnet test --no-build --verbosity normal
