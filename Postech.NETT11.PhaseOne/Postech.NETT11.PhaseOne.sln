@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.NETT11.PhaseOne.WebApp", "Postech.NETT11.PhaseOne.WebApp\Postech.NETT11.PhaseOne.WebApp.csproj", "{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.NETT11.PhaseOne.Infrastructure", "Postech.NETT11.PhaseOne.Infrastructure\Postech.NETT11.PhaseOne.Infrastructure.csproj", "{C6AFF27D-34CD-4444-BEB9-4D3E01AC0B36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.NETT11.PhaseOne.Domain", "Postech.NETT11.PhaseOne.Domain\Postech.NETT11.PhaseOne.Domain.csproj", "{65D2C9FD-5770-4458-9765-0CA527B0E2E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAC3E4F2-5750-40E9-A1CD-C24BC0F57021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6AFF27D-34CD-4444-BEB9-4D3E01AC0B36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6AFF27D-34CD-4444-BEB9-4D3E01AC0B36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6AFF27D-34CD-4444-BEB9-4D3E01AC0B36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6AFF27D-34CD-4444-BEB9-4D3E01AC0B36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65D2C9FD-5770-4458-9765-0CA527B0E2E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65D2C9FD-5770-4458-9765-0CA527B0E2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65D2C9FD-5770-4458-9765-0CA527B0E2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65D2C9FD-5770-4458-9765-0CA527B0E2E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
