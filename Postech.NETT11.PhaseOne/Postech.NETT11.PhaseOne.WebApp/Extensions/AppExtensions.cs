@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Postech.NETT11.PhaseOne.WebApp.Middlewares;
 using Postech.NETT11.PhaseOne.WebApp.Services.Auth;
 using Scalar.AspNetCore;
 
@@ -26,5 +27,5 @@ public static class AppExtensions
         
         return app;
     }
-    
+
 }
