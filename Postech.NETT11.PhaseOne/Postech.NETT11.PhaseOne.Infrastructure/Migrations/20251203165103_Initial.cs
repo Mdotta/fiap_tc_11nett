@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -20,11 +22,20 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                     Username = table.Column<string>(type: "NVARCHAR(50)", nullable: false),
                     PasswordHash = table.Column<string>(type: "NVARCHAR(100)", nullable: false),
                     Role = table.Column<string>(type: "NVARCHAR(10)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETDATE()")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "PasswordHash", "Role", "UserHandle", "Username" },
+                values: new object[,]
+                {
+                    { new Guid("91bcea30-609a-43d8-8516-7ba97c1e4ce0"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tempPass", "Client", "client", "client" },
+                    { new Guid("adce3f91-baad-4304-8ffc-d03b69a7b7d9"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tempPass", "Admin", "admin", "admin" }
                 });
         }
 
