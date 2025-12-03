@@ -12,7 +12,7 @@ public class AppDbContext :DbContext
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
-        _connectionString = configuration.GetConnectionString("DefaultConnection");
+        _connectionString = configuration.GetConnectionString("DefaultConnection")!;
     }
 
     public AppDbContext(string connectionString)

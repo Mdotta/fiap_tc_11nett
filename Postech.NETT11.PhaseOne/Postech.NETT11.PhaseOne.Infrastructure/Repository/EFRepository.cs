@@ -35,7 +35,9 @@ public class EFRepository<T>:IRepository<T> where T: BaseEntity
 
     public void Delete(Guid id)
     {
-        _dbSet.Remove(GetById(id));
+        if(GetById(id) is not T entity)
+            return;
+        _dbSet.Remove(entity);
         _context.SaveChanges();
     }
 }
