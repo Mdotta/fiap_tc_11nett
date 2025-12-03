@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Postech.NETT11.PhaseOne.Infrastructure.Repository;
 using Postech.NETT11.PhaseOne.WebApp.Endpoints;
 using Postech.NETT11.PhaseOne.WebApp.Extensions;
 using Postech.NETT11.PhaseOne.WebApp.Middlewares;
@@ -8,6 +10,16 @@ builder
     .RegisterOpenApi()
     .RegisterServices()
     .RegisterDependencyInjection();
+
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+    options.UseSqlServer(connectionString);
+});
 
 //App
 var app = builder.Build();

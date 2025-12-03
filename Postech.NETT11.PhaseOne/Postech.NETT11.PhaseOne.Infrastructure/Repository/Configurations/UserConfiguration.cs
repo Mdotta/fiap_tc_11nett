@@ -13,8 +13,7 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
             .HasColumnType("UNIQUEIDENTIFIER")
-            .ValueGeneratedNever()
-            .UseIdentityColumn();
+            .ValueGeneratedOnAdd();
 
         builder.Property(x => x.CreatedAt)
             .HasColumnType("DATETIME")
