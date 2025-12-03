@@ -1,10 +1,12 @@
-using Postech.NETT11.PhaseOne.WebApp.Models;
+using Postech.NETT11.PhaseOne.Domain.Contracts.Auth;
+using Postech.NETT11.PhaseOne.Domain.Repositories;
 using Postech.NETT11.PhaseOne.WebApp.Services.Auth;
 
 namespace Postech.NETT11.PhaseOne.WebApp.Endpoints;
 
 public static class AuthEndpoint
 {
+    
     public static void RegisterAuthEndpoints(this WebApplication app)
     {
         var auth = app.MapGroup("/auth");
@@ -17,19 +19,20 @@ public static class AuthEndpoint
         auth.MapGet("/me", () => TypedResults.Ok("Get user data"))
             .WithName("Me")
             .WithOpenApi()
-            .RequireAuthorization();
+            .RequireAuthorization("Admin");
     }
 
-    static IResult Authenticate(AuthRequest request, IJwtService jwtService)
+    static IResult Authenticate(AuthRequest request, IJwtService jwtService, IUserRepository repository)
     {
         //TODO: Validate user credentials from database
-        if (request.Username == "admin" && request.Password == "password")
-        {
-            var token = jwtService.GenerateToken(request.Username, "Admin");
+        var hashPass = request.Password;
+        var user = repository.GetAll().FirstOrDefault(x=>x.Username == request.Username && x.PasswordHash == hashPass);
+        
+        if (user == null)
+            return TypedResults.Unauthorized();
+        
+        var token = jwtService.GenerateToken(user.Id.ToString(), user.Role.ToString());
 
-            return TypedResults.Ok(token);
-        }
-
-        return TypedResults.Unauthorized();
+        return TypedResults.Ok(token);
     }
 }

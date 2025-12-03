@@ -12,7 +12,7 @@ using Postech.NETT11.PhaseOne.Infrastructure.Repository;
 namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251203105011_Initial")]
+    [Migration("20251203165103_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -32,7 +32,9 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                         .HasColumnType("UNIQUEIDENTIFIER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("DATETIME");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIME2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -53,6 +55,26 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("adce3f91-baad-4304-8ffc-d03b69a7b7d9"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PasswordHash = "tempPass",
+                            Role = "Admin",
+                            UserHandle = "admin",
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("91bcea30-609a-43d8-8516-7ba97c1e4ce0"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PasswordHash = "tempPass",
+                            Role = "Client",
+                            UserHandle = "client",
+                            Username = "client"
+                        });
                 });
 #pragma warning restore 612, 618
         }

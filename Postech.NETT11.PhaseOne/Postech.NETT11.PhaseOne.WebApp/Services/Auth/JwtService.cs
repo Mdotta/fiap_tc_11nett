@@ -18,13 +18,15 @@ public class JwtService(IConfiguration configuration):IJwtService
         
         var jwtKey = configuration["Jwt:Key"];
         ArgumentException.ThrowIfNullOrEmpty(jwtKey);
+        var expiresInMinutes = configuration["Jwt:ExpiresInMinutes"];
+        ArgumentException.ThrowIfNullOrEmpty(expiresInMinutes);
         
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var token = new JwtSecurityToken(
             issuer: configuration["Jwt:Issuer"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
+            expires: DateTime.Now.AddMinutes(int.Parse(expiresInMinutes)),
             signingCredentials: creds);
         
         return new JwtSecurityTokenHandler().WriteToken(token);

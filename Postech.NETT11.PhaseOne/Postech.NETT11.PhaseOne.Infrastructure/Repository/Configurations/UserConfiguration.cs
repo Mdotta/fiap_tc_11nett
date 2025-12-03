@@ -16,7 +16,8 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.CreatedAt)
-            .HasColumnType("DATETIME")
+            .HasColumnType("DATETIME2")
+            .HasDefaultValueSql("GETDATE()")
             .IsRequired();
         
         builder.Property(x => x.UserHandle)
@@ -37,5 +38,32 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
                 v => v.ToString(),
                 v => Enum.Parse<UserRole>(v))
             .IsRequired();
+
+        AddStartingData(builder);
+    }
+
+    private void AddStartingData(EntityTypeBuilder<User> builder)
+    {
+        var userAdmin = new User()
+        {
+            Id = Guid.NewGuid(),
+            CreatedAt = new DateTime(year:2025, month:1, day:1),
+            UserHandle = "admin",
+            Username = "admin",
+            PasswordHash = "tempPass",
+            Role = UserRole.Admin
+        };
+        
+        var userClient = new User()
+        {
+            Id = Guid.NewGuid(),
+            CreatedAt = new DateTime(year:2025, month:1, day:1),
+            UserHandle = "client",
+            Username = "client",
+            PasswordHash = "tempPass",
+            Role = UserRole.Client
+        };
+        
+        builder.HasData(userAdmin, userClient);
     }
 }

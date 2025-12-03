@@ -1,25 +1,24 @@
 using Microsoft.EntityFrameworkCore;
+using Postech.NETT11.PhaseOne.Domain.Repositories;
 using Postech.NETT11.PhaseOne.Infrastructure.Repository;
 using Postech.NETT11.PhaseOne.WebApp.Endpoints;
 using Postech.NETT11.PhaseOne.WebApp.Extensions;
 using Postech.NETT11.PhaseOne.WebApp.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
-builder
-    .RegisterAuth()
-    .RegisterOpenApi()
-    .RegisterServices()
-    .RegisterDependencyInjection();
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    var connectionString = configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString);
-});
+builder
+    .RegisterAuth()
+    .RegisterOpenApi()
+    .RegisterServices()
+    .RegisterRepositories()
+    .RegisterDbContext(configuration);
+
+builder.Services.AddControllers();
 
 //App
 var app = builder.Build();
@@ -42,13 +41,15 @@ app.UseGlobalExceptionHandling();
 
 #region Endpoints
 
-//Test endpoint
-app.MapGet("/ping", () => TypedResults.Ok("pong"))
-    .WithName("Ping")
-    .WithOpenApi()
-    .AllowAnonymous();
+app.MapControllers();
 
-app.UseEndpoints();
+// //Test endpoint
+// app.MapGet("/ping", () => TypedResults.Ok("pong"))
+//     .WithName("Ping")
+//     .WithOpenApi()
+//     .AllowAnonymous();
+//
+// app.UseEndpoints();
 
 #endregion
 
