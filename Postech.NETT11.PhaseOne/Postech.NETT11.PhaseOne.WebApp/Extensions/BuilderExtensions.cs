@@ -60,8 +60,7 @@ public static class BuilderExtensions
     public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
     {
         builder.Services
-            .AddEndpointsApiExplorer()
-            .AddOpenApi();
+            .AddEndpointsApiExplorer();
         
         return builder;
     }

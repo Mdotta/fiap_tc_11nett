@@ -13,7 +13,7 @@ public static class AuthEndpoint
             .WithName("Authenticate")
             .WithOpenApi()
             .AllowAnonymous();
-        
+
         auth.MapGet("/me", () => TypedResults.Ok("Get user data"))
             .WithName("Me")
             .WithOpenApi()
@@ -22,6 +22,7 @@ public static class AuthEndpoint
 
     static IResult Authenticate(AuthRequest request, IJwtService jwtService)
     {
+        //TODO: Validate user credentials from database
         if (request.Username == "admin" && request.Password == "password")
         {
             var token = jwtService.GenerateToken(request.Username, "Admin");
