@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
+using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Enums;
 using Postech.NETT11.PhaseOne.Domain.Entities;
-using Postech.NETT11.PhaseOne.Domain.Enums;
 
 namespace Postech.NETT11.PhaseOne.Infrastructure.Repository.Configurations;
 
