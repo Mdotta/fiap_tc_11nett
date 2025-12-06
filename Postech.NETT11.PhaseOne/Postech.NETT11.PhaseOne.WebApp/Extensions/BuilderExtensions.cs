@@ -16,6 +16,7 @@ public static class BuilderExtensions
 {
     public static WebApplicationBuilder RegisterAuth(this WebApplicationBuilder builder)
     {
+        var key = builder.Configuration["Jwt:Key"]??throw new ArgumentException("Missing configuration key");
         builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -32,7 +33,7 @@ public static class BuilderExtensions
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                 };
             });
         

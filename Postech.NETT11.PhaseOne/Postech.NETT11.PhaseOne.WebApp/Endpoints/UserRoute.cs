@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Postech.NETT11.PhaseOne.Domain.Repositories;
+using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
 
 namespace Postech.NETT11.PhaseOne.WebApp.Endpoints;
 
