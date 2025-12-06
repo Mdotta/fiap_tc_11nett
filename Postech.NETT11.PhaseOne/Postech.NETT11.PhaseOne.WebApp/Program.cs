@@ -18,8 +18,6 @@ builder
     .RegisterRepositories()
     .RegisterDbContext(configuration);
 
-builder.Services.AddControllers();
-
 //App
 var app = builder.Build();
 
@@ -41,15 +39,7 @@ app.UseGlobalExceptionHandling();
 
 #region Endpoints
 
-app.MapControllers();
-
-// //Test endpoint
-// app.MapGet("/ping", () => TypedResults.Ok("pong"))
-//     .WithName("Ping")
-//     .WithOpenApi()
-//     .AllowAnonymous();
-//
-// app.UseEndpoints();
+app.UseRoutes();
 
 #endregion
 
