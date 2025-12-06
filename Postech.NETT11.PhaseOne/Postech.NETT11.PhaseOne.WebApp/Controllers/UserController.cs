@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
 using Postech.NETT11.PhaseOne.Domain.Repositories;
 
 namespace Postech.NETT11.PhaseOne.WebApp.Controllers;
@@ -17,7 +18,7 @@ public class UserController:ControllerBase
     }
 
     [HttpGet("me")]
-    [Authorize("Client")]
+    [Authorize]
     public IActionResult Me()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

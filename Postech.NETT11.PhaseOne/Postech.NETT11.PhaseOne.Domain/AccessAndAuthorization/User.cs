@@ -1,6 +1,7 @@
-using Postech.NETT11.PhaseOne.Domain.Enums;
+using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Enums;
+using Postech.NETT11.PhaseOne.Domain.Entities;
 
-namespace Postech.NETT11.PhaseOne.Domain.Entities;
+namespace Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
 
 public class User:BaseEntity
 {

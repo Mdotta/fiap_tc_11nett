@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Postech.NETT11.PhaseOne.Domain.Contracts.Auth;
+using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
+using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Contracts;
+using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Services;
 using Postech.NETT11.PhaseOne.Domain.Repositories;
 using Postech.NETT11.PhaseOne.WebApp.Services.Auth;
 
@@ -22,8 +24,8 @@ public class AuthController:ControllerBase
     public IActionResult Authenticate([FromBody] AuthRequest request)
     {
         var hashPass = request.Password;
-        var user = _userRepository.GetAll().FirstOrDefault(x=>x.Username == request.Username && x.PasswordHash == hashPass);
-
+        var user = _userRepository.GetByCredentials(request.Username,hashPass);
+        
         if (user == null)
             return Unauthorized();
         
