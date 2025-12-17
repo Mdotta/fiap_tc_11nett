@@ -1,5 +1,12 @@
 
-# FIAP Cloud Games – Fase 1
+A plataforma FCG - FIAP Cloud Games é um MVP voltado para a educação em tecnologia, com foco na venda de jogos digitais e gestão de servidores para partidas online. Este documento detalha a organização do projeto, ferramentas utilizadas, diagramas explicativos, arquitetura planejada, requisitos técnicos e instruções para execução e migrações. Confira as seções abaixo para mais informações:
+
+----
+## 📑 Sumário
+- [FIAP Cloud Games – Fase 1 MVP](#FIAP Cloud Games – Fase 1 MVP)
+
+
+## FIAP Cloud Games – Fase 1 MVP
 Desenvolvimento de MVP da plataforma Fiap Cloud Games (FCG).
 Nessa etapa está presente:
 - Cadastro e autenticação de usuário
