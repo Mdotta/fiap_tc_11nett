@@ -25,8 +25,4 @@
       <ProjectReference Include="..\Postech.NETT11.PhaseOne.Domain\Postech.NETT11.PhaseOne.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
-
 </Project>
