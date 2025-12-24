@@ -9,7 +9,7 @@ services:
     ports:
       - "2022:1433"
     healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P S4f3P4ss -Q "SELECT 1"
+      test: [ "CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$${SA_PASSWORD}\" -Q \"SELECT 1\"" ]
       interval: 10s
       timeout: 10s
       retries: 10
