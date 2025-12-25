@@ -2,6 +2,14 @@ namespace Postech.NETT11.PhaseOne.WebApp.Middlewares;
 
 public static class CustomMiddlewares
 {
+// NEW - Add CorrelationId \\
+    public static IApplicationBuilder UseCorrelationId(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<CorrelationIdMiddleware>();
+    }
+// NEW - Add CorrelationId \\    
+
+// Keep existing method \\
     public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder app)
     {
         return app.Use(async (context, next) =>
@@ -11,7 +19,9 @@ public static class CustomMiddlewares
             Console.WriteLine($"Outgoing response: {context.Response.StatusCode}");
         });
     }
-    
+// Keep existing method \\
+
+// Update to use Serilog logger \\
     public static IApplicationBuilder UseGlobalExceptionHandling(this IApplicationBuilder app)
     {
         return app.Use(async (context, next) =>
@@ -20,12 +30,26 @@ public static class CustomMiddlewares
             {
                 await next.Invoke();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
+                var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                var correlationId = context.Items["CorrelationId"]?.ToString() ?? "Unknown";
+
+                logger.LogError(ex,
+                    "Unhandled exception. CorrelationId: {CorrelationId}",
+                    correlationId);
+
                 context.Response.StatusCode = 500;
-                await context.Response.WriteAsync("An unexpected error occurred, please try again later.");
+                context.Response.ContentType = "application/json";
+                
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    error = "An unexpected error occurred",
+                    correlationId,
+                    timestamp = DateTime.UtcNow
+                });
             }
         });
     }
+// Update to use Serilog logger \\    
 }

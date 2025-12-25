@@ -4,45 +4,126 @@ using Postech.NETT11.PhaseOne.Infrastructure.Repository;
 using Postech.NETT11.PhaseOne.WebApp.Endpoints;
 using Postech.NETT11.PhaseOne.WebApp.Extensions;
 using Postech.NETT11.PhaseOne.WebApp.Middlewares;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.Elasticsearch;
 
-var builder = WebApplication.CreateBuilder(args);
 
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
+// BOOTSTRAP LOGGER \\
 
-builder
-    .RegisterAuth()
-    .RegisterOpenApi()
-    .RegisterServices()
-    .RegisterRepositories()
-    .RegisterDbContext(configuration);
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-//App
-var app = builder.Build();
+// BOOTSTRAP LOGGER \\    
 
-app.UseOpenApi();
+try
+{
+    Log.Information("Starting Postech.NETT11.PhaseOne application");
 
-#region Auth
+    var builder = WebApplication.CreateBuilder(args);
 
-app.UseAuthentication();
-app.UseAuthorization();
+// CONFIGURE SERILOG \\
+    builder.Host.UseSerilog((context, services, configuration) =>
+    {
+        configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithThreadId()
+            .Enrich.WithProcessId()
+            .WriteTo.Console(
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{CorrelationId}] {Message:lj}{NewLine}{Exception}"
+            )
+            .WriteTo.File(
+                path: "logs/log-.txt",
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 7,
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] [{CorrelationId}] {Message:lj}{NewLine}{Exception}"
+            )
+            .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://192.168.224.2:9200"))
+            {
+                IndexFormat = "logs-{0:yyyy.MM.dd}",
+                AutoRegisterTemplate = true,
+                NumberOfShards = 1,
+                NumberOfReplicas = 0,
+                EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog,
+                BatchPostingLimit = 50,
+                Period = TimeSpan.FromSeconds(2)
+            });
+    });
+// CONFIGURE SERILOG \\
 
-#endregion
+    var configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .Build();
 
-#region Middlewares
+    builder
+        .RegisterAuth()
+        .RegisterOpenApi()
+        .RegisterServices()
+        .RegisterRepositories()
+        .RegisterDbContext(configuration);
 
-app.UseRequestLogging();
-app.UseGlobalExceptionHandling();
+// App \\
+    var app = builder.Build();
+// App \\
 
-#endregion
+// SERILOG REQUEST LOGGING \\
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000}ms";
+        
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set("RemoteIP", httpContext.Connection.RemoteIpAddress?.ToString());
+            diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].ToString());
+            
+            if (httpContext.Items.TryGetValue("CorrelationId", out var correlationId))
+            {
+                diagnosticContext.Set("CorrelationId", correlationId);
+            }
+        };
+    });
+// SERILOG REQUEST LOGGING \\
 
-#region Endpoints
+    app.UseOpenApi();
 
-app.UseRoutes();
+    #region Auth
 
-#endregion
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-app.UseHttpsRedirection();
+    #endregion
 
-app.Run();
+    #region Middlewares
+
+    app.UseCorrelationId();           // Add BEFORE the other middlewares \\
+    app.UseGlobalExceptionHandling();
+
+    #endregion
+
+    #region Endpoints
+
+    app.UseRoutes();
+
+    #endregion
+
+    app.UseHttpsRedirection();
+
+    Log.Information("Application started successfully");
+    Log.Information("Kibana: http://192.168.244.2:5601");
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.Information("Application shutting down");
+    Log.CloseAndFlush();
+}
