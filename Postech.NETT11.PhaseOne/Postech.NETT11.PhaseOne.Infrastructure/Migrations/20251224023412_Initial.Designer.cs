@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Postech.NETT11.PhaseOne.Infrastructure.Repository;
+using Postech.NETT11.PhaseOne.Infrastructure;
 
 #nullable disable
 
 namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251203165103_Initial")]
+    [Migration("20251224023412_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Postech.NETT11.PhaseOne.Domain.Entities.User", b =>
+            modelBuilder.Entity("Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -59,7 +59,7 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("adce3f91-baad-4304-8ffc-d03b69a7b7d9"),
+                            Id = new Guid("6c511c9f-cae7-4d08-8101-f8af7c81357a"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PasswordHash = "tempPass",
                             Role = "Admin",
@@ -68,7 +68,7 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("91bcea30-609a-43d8-8516-7ba97c1e4ce0"),
+                            Id = new Guid("4d9c6bd6-821a-40f0-b2b9-64683b5e91e1"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PasswordHash = "tempPass",
                             Role = "Client",

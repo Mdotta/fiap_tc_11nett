@@ -7,16 +7,12 @@ using Postech.NETT11.PhaseOne.WebApp.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
-
 builder
     .RegisterAuth()
     .RegisterOpenApi()
     .RegisterServices()
     .RegisterRepositories()
-    .RegisterDbContext(configuration);
+    .RegisterDbContext(builder.Configuration);
 
 //App
 var app = builder.Build();
