@@ -114,7 +114,7 @@ try
     app.UseHttpsRedirection();
 
     Log.Information("Application started successfully");
-    Log.Information("Kibana: http://192.168.244.2:5601");
+    Log.Information("Kibana: http://192.168.224.2:5601");
 
     app.Run();
 }
