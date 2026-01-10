@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace Postech.NETT11.PhaseOne.WebApp.Endpoints;
 
-public static class RouteConfiguration
+public static class RouteExtensions
 {
     public static void UseRoutes(this WebApplication app)
     {

@@ -1,15 +1,12 @@
 namespace Postech.NETT11.PhaseOne.WebApp.Middlewares;
 
-public static class CustomMiddlewares
+public static class CustomMiddlewaresExtensions
 {
-// NEW - Add CorrelationId \\
     public static IApplicationBuilder UseCorrelationId(this IApplicationBuilder app)
     {
         return app.UseMiddleware<CorrelationIdMiddleware>();
     }
-// NEW - Add CorrelationId \\    
 
-// Keep existing method \\
     public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder app)
     {
         return app.Use(async (context, next) =>
@@ -19,9 +16,7 @@ public static class CustomMiddlewares
             Console.WriteLine($"Outgoing response: {context.Response.StatusCode}");
         });
     }
-// Keep existing method \\
 
-// Update to use Serilog logger \\
     public static IApplicationBuilder UseGlobalExceptionHandling(this IApplicationBuilder app)
     {
         return app.Use(async (context, next) =>
@@ -51,5 +46,4 @@ public static class CustomMiddlewares
             }
         });
     }
-// Update to use Serilog logger \\    
 }
