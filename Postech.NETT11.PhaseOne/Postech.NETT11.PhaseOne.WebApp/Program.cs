@@ -8,9 +8,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
 
-
 // BOOTSTRAP LOGGER \\
-
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
@@ -18,16 +16,17 @@ Log.Logger = new LoggerConfiguration()
     .CreateBootstrapLogger();
 
 // BOOTSTRAP LOGGER \\    
-
 try
 {
     Log.Information("Starting Postech.NETT11.PhaseOne application");
 
     var builder = WebApplication.CreateBuilder(args);
 
-// CONFIGURE SERILOG \\
+    // CONFIGURE SERILOG \\
     builder.Host.UseSerilog((context, services, configuration) =>
     {
+        var elasticUri = context.Configuration["ElasticSearch:Uri"] ?? "http://localhost:9200";
+        
         configuration
             .ReadFrom.Configuration(context.Configuration)
             .Enrich.FromLogContext()
@@ -43,7 +42,7 @@ try
                 retainedFileCountLimit: 7,
                 outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] [{CorrelationId}] {Message:lj}{NewLine}{Exception}"
             )
-            .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://192.168.224.2:9200"))
+            .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri))
             {
                 IndexFormat = "logs-{0:yyyy.MM.dd}",
                 AutoRegisterTemplate = true,
@@ -54,24 +53,19 @@ try
                 Period = TimeSpan.FromSeconds(2)
             });
     });
-// CONFIGURE SERILOG \\
-
-    var configuration = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json")
-        .Build();
-
+    // CONFIGURE SERILOG \\   
     builder
         .RegisterAuth()
         .RegisterOpenApi()
         .RegisterServices()
         .RegisterRepositories()
-        .RegisterDbContext(configuration);
+        .RegisterDbContext(builder.Configuration);
 
-// App \\
+    // App \\
     var app = builder.Build();
-// App \\
+    // App \\
 
-// SERILOG REQUEST LOGGING \\
+    // SERILOG REQUEST LOGGING \\
     app.UseSerilogRequestLogging(options =>
     {
         options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000}ms";
@@ -87,34 +81,29 @@ try
             }
         };
     });
-// SERILOG REQUEST LOGGING \\
+    // SERILOG REQUEST LOGGING \\
 
     app.UseOpenApi();
 
     #region Auth
-
     app.UseAuthentication();
     app.UseAuthorization();
-
     #endregion
 
     #region Middlewares
-
-    app.UseCorrelationId();           // Add BEFORE the other middlewares \\
+    app.UseCorrelationId();
+    app.UseRequestLogging();
     app.UseGlobalExceptionHandling();
-
     #endregion
 
     #region Endpoints
-
     app.UseRoutes();
-
     #endregion
 
     app.UseHttpsRedirection();
 
     Log.Information("Application started successfully");
-    Log.Information("Kibana: http://192.168.224.2:5601");
+    Log.Information("Kibana: {KibanaUrl}", builder.Configuration["Kibana:Url"] ?? "http://localhost:5601");
 
     app.Run();
 }
