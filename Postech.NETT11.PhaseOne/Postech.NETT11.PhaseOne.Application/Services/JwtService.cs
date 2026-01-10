@@ -3,9 +3,9 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Services;
+using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 
-namespace Postech.NETT11.PhaseOne.WebApp.Services.Auth;
+namespace Postech.NETT11.PhaseOne.Application.Services;
 
 public class JwtService(IConfiguration configuration):IJwtService
 {

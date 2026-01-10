@@ -26,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Postech.NETT11.PhaseOne.Application\Postech.NETT11.PhaseOne.Application.csproj" />
       <ProjectReference Include="..\Postech.NETT11.PhaseOne.Infrastructure\Postech.NETT11.PhaseOne.Infrastructure.csproj" />
     </ItemGroup>
 

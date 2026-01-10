@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.NETT11.PhaseOne.Inf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.NETT11.PhaseOne.Domain", "Postech.NETT11.PhaseOne.Domain\Postech.NETT11.PhaseOne.Domain.csproj", "{65D2C9FD-5770-4458-9765-0CA527B0E2E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.NETT11.PhaseOne.Application", "Postech.NETT11.PhaseOne.Application\Postech.NETT11.PhaseOne.Application.csproj", "{54E59DC7-8C40-4790-AAFB-C3F3F8DBBCE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{65D2C9FD-5770-4458-9765-0CA527B0E2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65D2C9FD-5770-4458-9765-0CA527B0E2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65D2C9FD-5770-4458-9765-0CA527B0E2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54E59DC7-8C40-4790-AAFB-C3F3F8DBBCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54E59DC7-8C40-4790-AAFB-C3F3F8DBBCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54E59DC7-8C40-4790-AAFB-C3F3F8DBBCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54E59DC7-8C40-4790-AAFB-C3F3F8DBBCE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
