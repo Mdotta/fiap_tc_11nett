@@ -9,7 +9,7 @@ services:
     ports:
       - "2022:1433"
     healthcheck:
-      test: [ "CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$${SA_PASSWORD}\" -Q \"SELECT 1\"" ]
+      test: ["CMD-SHELL","/opt/mssql-tools/bin/sqlcmd", "-C", "-S", "localhost", "-U", "sa", "-P", "$${SA_PASSWORD}", "-Q", "SELECT 1"]
       interval: 10s
       timeout: 10s
       retries: 10
@@ -17,6 +17,8 @@ services:
       - sqlserver-data:/var/opt/mssql
     networks:
       - postech-network
+    restart: unless-stopped
+
   api:
     build:
       context: .
@@ -41,10 +43,80 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-      
-      
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.3
+    container_name: postech-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - cluster.name=postech-logs
+      - node.name=elasticsearch-node-1
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - postech-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.3
+    container_name: postech-kibana
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_HOST=0.0.0.0
+      - KIBANA_DEFAULTAPPID=discover
+      - TELEMETRY_ENABLED=false
+      - TELEMETRY_OPTIN=false
+    ports:
+      - "5601:5601"
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - postech-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
 volumes:
   sqlserver-data:
+    driver: local
+  elasticsearch-data:
+    driver: local
+  kibana-data:
     driver: local
 
 networks:

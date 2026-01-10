@@ -77,6 +77,7 @@ public static class BuilderExtensions
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
+            
             options.UseSqlServer(connectionString);
         });
         return builder;

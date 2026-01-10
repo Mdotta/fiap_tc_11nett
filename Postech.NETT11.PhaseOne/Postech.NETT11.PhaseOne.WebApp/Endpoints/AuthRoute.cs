@@ -19,13 +19,17 @@ public class AuthRoute:BaseRoute
             .AllowAnonymous();
     }
 
-    IResult Authenticate(AuthRequest request, IJwtService jwtService, IUserRepository userRepository)
+    IResult Authenticate(AuthRequest request, IJwtService jwtService, IUserRepository userRepository, ILogger<AuthRoute> logger)
     {
+        logger.LogInformation("Authenticating user: {Username}", request.Username);
         var hashPass = request.Password;
         var user = userRepository.GetAll().FirstOrDefault(x=>x.Username == request.Username && x.PasswordHash == hashPass);
 
         if (user == null)
+        {
+            logger.LogInformation("User {Username} not found", request.Username);
             return TypedResults.Unauthorized();
+        }
         
         var token = jwtService.GenerateToken(user.Id.ToString(), user.Role.ToString());
 
