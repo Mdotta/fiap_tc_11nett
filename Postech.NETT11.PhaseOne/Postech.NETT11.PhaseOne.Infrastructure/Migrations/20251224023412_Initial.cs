@@ -34,8 +34,8 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "PasswordHash", "Role", "UserHandle", "Username" },
                 values: new object[,]
                 {
-                    { new Guid("91bcea30-609a-43d8-8516-7ba97c1e4ce0"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tempPass", "Client", "client", "client" },
-                    { new Guid("adce3f91-baad-4304-8ffc-d03b69a7b7d9"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tempPass", "Admin", "admin", "admin" }
+                    { new Guid("4d9c6bd6-821a-40f0-b2b9-64683b5e91e1"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tempPass", "Client", "client", "client" },
+                    { new Guid("6c511c9f-cae7-4d08-8101-f8af7c81357a"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tempPass", "Admin", "admin", "admin" }
                 });
         }
 

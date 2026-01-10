@@ -30,12 +30,12 @@ public static class CustomMiddlewares
             {
                 await next.Invoke();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
                 var correlationId = context.Items["CorrelationId"]?.ToString() ?? "Unknown";
 
-                logger.LogError(ex,
+                logger.LogError(e,
                     "Unhandled exception. CorrelationId: {CorrelationId}",
                     correlationId);
 
