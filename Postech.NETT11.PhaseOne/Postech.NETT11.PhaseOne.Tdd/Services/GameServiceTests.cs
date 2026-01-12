@@ -1,6 +1,9 @@
 using FluentAssertions;
-using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
+using Moq;
+using Postech.NETT11.PhaseOne.Application.Services;
+using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Enums;
+using Postech.NETT11.PhaseOne.Domain.GameStorageAndAcquisition;
 using Xunit;
 using Postech.NETT11.PhaseOne.Tests.Infra;
 using Postech.NETT11.PhaseOne.Tests.Enuns;
@@ -12,6 +15,16 @@ namespace Postech.NETT11.PhaseOne.Tests.Services;
 
 public class GameServiceTests
 {
+    protected readonly Mock<IGameRepository> _mockRepo;
+    protected readonly IGameService _service;
+    
+    public GameServiceTests()
+    {
+        //TODO: Implementar Mock do Repositório
+        _mockRepo = new Mock<IGameRepository>();
+        _service = new GameService();
+    }
+    
     [Fact]
     public void Admin_Should_Be_Able_To_Register_Game()
     {

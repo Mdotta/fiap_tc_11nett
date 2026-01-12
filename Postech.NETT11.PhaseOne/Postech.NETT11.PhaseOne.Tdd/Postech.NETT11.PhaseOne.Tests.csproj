@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,8 +24,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Postech.NETT11.PhaseOne.Application\Postech.NETT11.PhaseOne.Application.csproj" />
     <ProjectReference Include="..\Postech.NETT11.PhaseOne.Domain\Postech.NETT11.PhaseOne.Domain.csproj" />
     <ProjectReference Include="..\Postech.NETT11.PhaseOne.Infrastructure\Postech.NETT11.PhaseOne.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>
