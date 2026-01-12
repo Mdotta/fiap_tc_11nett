@@ -1,11 +1,5 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Postech.NETT11.PhaseOne.Infrastructure;
-using Postech.NETT11.PhaseOne.WebApp.Middlewares;
-using Postech.NETT11.PhaseOne.WebApp.Services.Auth;
 using Scalar.AspNetCore;
 
 namespace Postech.NETT11.PhaseOne.WebApp.Extensions;
