@@ -1,4 +1,4 @@
-namespace Postech.NETT11.PhaseOne.Tests.Usuarios.Exceptions;
+namespace Postech.NETT11.PhaseOne.Tests.Exceptions;
 
 public class DomainException : Exception
 {

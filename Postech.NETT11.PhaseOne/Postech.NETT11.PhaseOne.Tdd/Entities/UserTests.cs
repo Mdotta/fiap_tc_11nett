@@ -1,15 +1,14 @@
 using FluentAssertions;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Enums;
-using Postech.NETT11.PhaseOne.Tests.Usuarios.Exceptions;
 using Xunit;
 
-namespace Postech.NETT11.PhaseOne.Tests.Usuarios;
+namespace Postech.NETT11.PhaseOne.Tests.Entities;
 
-public class UserValidationTests
+public class UserTests
 {
     [Fact]
-    public void Deve_criar_usuario_quando_dados_forem_validos()
+    public void Should_Create_User_When_Data_Is_Valid()
     {
         // Arrange
         var userHandle = "usuario123";
@@ -37,7 +36,7 @@ public class UserValidationTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void Deve_validar_email_obrigatorio(string email)
+    public void Should_Validate_Email_Is_Required(string email)
     {
         // Arrange & Act
         var user = new User
@@ -49,9 +48,6 @@ public class UserValidationTests
         };
 
         // Assert
-        // A validação deve ser feita no serviço de criação de usuário
-        // Por enquanto, apenas verificamos que o objeto pode ser criado
-        // mas a validação será implementada no serviço
         user.Username.Should().Be(email);
     }
 
@@ -63,13 +59,13 @@ public class UserValidationTests
     [InlineData("email@", false)]
     [InlineData("@fiap.com.br", false)]
     [InlineData("email @fiap.com.br", false)]
-    public void Deve_validar_formato_de_email(string email, bool esperadoValido)
+    public void Should_Validate_Email_Format(string email, bool expectedValid)
     {
         // Arrange & Act
         var isValid = IsValidEmail(email);
 
         // Assert
-        isValid.Should().Be(esperadoValido);
+        isValid.Should().Be(expectedValid);
     }
 
     [Theory]
@@ -84,17 +80,17 @@ public class UserValidationTests
     [InlineData("12345678", false)] 
     [InlineData("Senha12", false)]  
     [InlineData("", false)]  
-    public void Deve_validar_senha_segura(string senha, bool esperadoValido)
+    public void Should_Validate_Secure_Password(string password, bool expectedValid)
     {
         // Arrange & Act
-        var isValid = IsValidPassword(senha);
+        var isValid = IsValidPassword(password);
 
         // Assert
-        isValid.Should().Be(esperadoValido);
+        isValid.Should().Be(expectedValid);
     }
 
     [Fact]
-    public void Deve_criar_usuario_com_role_client_por_padrao()
+    public void Should_Create_User_With_Client_Role_By_Default()
     {
         // Arrange & Act
         var user = new User
@@ -110,7 +106,7 @@ public class UserValidationTests
     }
 
     [Fact]
-    public void Deve_criar_usuario_com_role_admin()
+    public void Should_Create_User_With_Admin_Role()
     {
         // Arrange & Act
         var user = new User
@@ -125,7 +121,6 @@ public class UserValidationTests
         user.Role.Should().Be(UserRole.Admin);
     }
 
-    // Métodos auxiliares para validação (serão movidos para um serviço de validação)
     private static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
