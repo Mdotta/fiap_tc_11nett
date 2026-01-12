@@ -17,13 +17,19 @@ public class Game:BaseEntity
     public Game(string name, string description, string developer, string publisher, decimal price, GameStatus status, DateTime releaseDate)
     {
         SetName(name);
+        SetDescription(description);
         SetDeveloper(developer);
         SetPublisher(publisher);
         SetPrice(price);
         SetReleaseDate(releaseDate);
         SetStatus(status);
     }
-    
+
+    private void SetDescription(string description)
+    {
+        Description = description;
+    }
+
     //Todo: Mudar forma de validação para não usar exceptions
     private void SetName(string name)
     {
