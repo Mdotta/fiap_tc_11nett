@@ -17,11 +17,16 @@ public class UserRoute:BaseRoute
             .RequireAuthorization();
     }
 
-    private IResult GetAuthenticatedUserData(HttpContext context, IUserRepository userRepository)
+    private IResult GetAuthenticatedUserData(HttpContext context, IUserRepository userRepository, ILogger<UserRoute> logger)
     {
         var userId = context.User.Claims.FirstOrDefault(x=>x.Type == ClaimTypes.NameIdentifier);
         if (userId == null)
+        {
+            logger.LogInformation("User {Username} not found", context.User.Identity.Name);
             return TypedResults.Unauthorized();
+        }
+        
+        logger.LogInformation("Getting data for user: {UserId}", userId.Value);
         var user = userRepository.GetById(Guid.Parse(userId.Value));
         return TypedResults.Ok(user);
     }

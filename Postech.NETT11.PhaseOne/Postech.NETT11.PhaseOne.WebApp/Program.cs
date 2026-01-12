@@ -1,44 +1,90 @@
-using Microsoft.EntityFrameworkCore;
-using Postech.NETT11.PhaseOne.Domain.Repositories;
-using Postech.NETT11.PhaseOne.Infrastructure.Repository;
 using Postech.NETT11.PhaseOne.WebApp.Endpoints;
 using Postech.NETT11.PhaseOne.WebApp.Extensions;
 using Postech.NETT11.PhaseOne.WebApp.Middlewares;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder
-    .RegisterAuth()
-    .RegisterOpenApi()
-    .RegisterServices()
-    .RegisterRepositories()
-    .RegisterDbContext(builder.Configuration);
+try
+{
+    Log.Information("Starting Postech.NETT11.PhaseOne application");
 
-//App
-var app = builder.Build();
+    var builder = WebApplication.CreateBuilder(args);
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    Log.Information("Connection string: {ConnectionString}", connectionString);
 
-app.UseOpenApi();
+    builder.Host.UseSerilog((context, services, options) =>
+    {
+        options
+            .ReadFrom.Configuration(context.Configuration)
+            .Enrich.FromLogContext();
+    });
+    
+    builder
+        .RegisterAuth()
+        .RegisterOpenApi()
+        .RegisterServices()
+        .RegisterRepositories()
+        .RegisterDbContext(builder.Configuration);
 
-#region Auth
+    
+    // Build the app
+    var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000}ms";
+        
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set("RemoteIP", httpContext.Connection.RemoteIpAddress?.ToString());
+            diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].ToString());
+            
+            if (httpContext.Items.TryGetValue("CorrelationId", out var correlationId))
+            {
+                diagnosticContext.Set("CorrelationId", correlationId);
+            }
+        };
+    });
 
-#endregion
+    app.UseOpenApi();
+    
+    //apply migrations
+    await app.MigrateDatabaseAsync();
 
-#region Middlewares
+    #region Auth
+    app.UseAuthentication();
+    app.UseAuthorization();
+    #endregion
 
-app.UseRequestLogging();
-app.UseGlobalExceptionHandling();
+    #region Middlewares
+    app
+        .UseCorrelationId()
+        .UseRequestLogging()
+        .UseGlobalExceptionHandling();
+    #endregion
 
-#endregion
+    #region Endpoints
+    app.UseRoutes();
+    #endregion
 
-#region Endpoints
+    app.UseHttpsRedirection();
 
-app.UseRoutes();
+    Log.Information("Application started successfully");
+    Log.Information("Kibana: {KibanaUrl}", builder.Configuration["Kibana:Url"] ?? "http://localhost:5601");
 
-#endregion
-
-app.UseHttpsRedirection();
-
-app.Run();
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.Information("Application shutting down");
+    Log.CloseAndFlush();
+}

@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Postech.NETT11.PhaseOne.Application.Services;
+using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
-using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Services;
-using Postech.NETT11.PhaseOne.Domain.Repositories;
 using Postech.NETT11.PhaseOne.Infrastructure;
 using Postech.NETT11.PhaseOne.Infrastructure.Repository;
-using Postech.NETT11.PhaseOne.WebApp.Services.Auth;
 
 namespace Postech.NETT11.PhaseOne.WebApp.Extensions;
 
@@ -77,6 +76,7 @@ public static class BuilderExtensions
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
+            
             options.UseSqlServer(connectionString);
         });
         return builder;

@@ -1,4 +1,4 @@
-namespace Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization.Services;
+namespace Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 
 public interface IJwtService
 {
