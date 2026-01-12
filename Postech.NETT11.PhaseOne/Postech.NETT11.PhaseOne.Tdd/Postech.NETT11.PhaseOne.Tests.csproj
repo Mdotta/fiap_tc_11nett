@@ -29,8 +29,4 @@
     <ProjectReference Include="..\Postech.NETT11.PhaseOne.Infrastructure\Postech.NETT11.PhaseOne.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Utils\" />
-  </ItemGroup>
-
 </Project>
