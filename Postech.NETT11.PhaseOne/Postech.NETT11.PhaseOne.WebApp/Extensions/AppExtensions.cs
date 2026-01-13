@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Postech.NETT11.PhaseOne.Infrastructure;
 using Scalar.AspNetCore;
+using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Postech.NETT11.PhaseOne.WebApp.Extensions;
 
@@ -24,37 +26,24 @@ public static class AppExtensions
         return app;
     }
     
-    public static async Task MigrateDatabaseAsync(this WebApplication app)
+    public static WebApplication MigrateDatabaseAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-        const int maxRetries = 10;
-        var delay = TimeSpan.FromSeconds(3);
-
-        for (int i = 1; i <= maxRetries; i++)
+        var services = scope.ServiceProvider;
+        try
         {
-            try
-            {
-                logger.LogInformation("Applying database migrations (attempt {Attempt}/{MaxRetries})...", i, maxRetries);
-                await db.Database.MigrateAsync();
-                logger.LogInformation("Database migrations applied successfully!");
-                return;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Migration failed on attempt {Attempt}/{MaxRetries}", i, maxRetries);
-                
-                if (i == maxRetries)
-                {
-                    logger.LogCritical("Failed to apply migrations after {MaxRetries} attempts. Exiting.", maxRetries);
-                    throw;
-                }
-                
-                await Task.Delay(delay);
-            }
+            var db = services.GetRequiredService<AppDbContext>();
+            Log.Information("Applying database migrations (if any)...");
+            db.Database.Migrate();
+            Log.Information("Database migrations applied.");
         }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "An error occurred while migrating or initializing the database.");
+            throw;
+        }
+
+        return app;
     }
 
 }

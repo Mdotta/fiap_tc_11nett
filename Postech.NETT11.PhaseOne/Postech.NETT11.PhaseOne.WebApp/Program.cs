@@ -3,6 +3,7 @@ using Postech.NETT11.PhaseOne.WebApp.Extensions;
 using Postech.NETT11.PhaseOne.WebApp.Middlewares;
 using Serilog;
 
+
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
@@ -14,15 +15,6 @@ try
     Log.Information("Starting Postech.NETT11.PhaseOne application");
 
     var builder = WebApplication.CreateBuilder(args);
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    Log.Information("Connection string: {ConnectionString}", connectionString);
-
-    builder.Host.UseSerilog((context, services, options) =>
-    {
-        options
-            .ReadFrom.Configuration(context.Configuration)
-            .Enrich.FromLogContext();
-    });
     
     builder
         .RegisterAuth()
@@ -30,9 +22,20 @@ try
         .RegisterServices()
         .RegisterRepositories()
         .RegisterDbContext(builder.Configuration);
-
     
-    // Build the app
+    if (args.Contains("--no-build") || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "DesignTime")
+    {
+        return;
+    }
+    
+    builder.Host.UseSerilog((context, services, options) =>
+    {
+        options
+            .ReadFrom.Configuration(context.Configuration)
+            .Enrich.FromLogContext();
+    });
+    
+    
     var app = builder.Build();
 
     app.UseSerilogRequestLogging(options =>
@@ -53,9 +56,8 @@ try
 
     app.UseOpenApi();
     
-    //apply migrations
-    await app.MigrateDatabaseAsync();
-
+    app.MigrateDatabaseAsync();
+    
     #region Auth
     app.UseAuthentication();
     app.UseAuthorization();
@@ -79,7 +81,7 @@ try
 
     app.Run();
 }
-catch (Exception ex)
+catch (Exception ex) when (ex is not HostAbortedException)
 {
     Log.Fatal(ex, "Application terminated unexpectedly");
 }

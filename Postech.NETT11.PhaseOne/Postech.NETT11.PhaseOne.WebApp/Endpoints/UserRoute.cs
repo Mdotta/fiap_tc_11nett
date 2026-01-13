@@ -27,7 +27,7 @@ public class UserRoute:BaseRoute
         }
         
         logger.LogInformation("Getting data for user: {UserId}", userId.Value);
-        var user = userRepository.GetById(Guid.Parse(userId.Value));
+        var user = userRepository.GetByIdAsync(Guid.Parse(userId.Value));
         return TypedResults.Ok(user);
     }
 }

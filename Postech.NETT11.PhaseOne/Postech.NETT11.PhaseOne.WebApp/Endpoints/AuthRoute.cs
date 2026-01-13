@@ -23,7 +23,7 @@ public class AuthRoute:BaseRoute
     {
         logger.LogInformation("Authenticating user: {Username}", request.Username);
         var hashPass = request.Password;
-        var user = userRepository.GetAll().FirstOrDefault(x=>x.Username == request.Username && x.PasswordHash == hashPass);
+        var user = userRepository.GetByCredentials(request.Username, hashPass);
 
         if (user == null)
         {

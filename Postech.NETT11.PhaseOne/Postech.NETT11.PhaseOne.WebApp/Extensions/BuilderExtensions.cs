@@ -6,6 +6,7 @@ using Microsoft.OpenApi;
 using Postech.NETT11.PhaseOne.Application.Services;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
+using Postech.NETT11.PhaseOne.Domain.GameStorageAndAcquisition;
 using Postech.NETT11.PhaseOne.Infrastructure;
 using Postech.NETT11.PhaseOne.Infrastructure.Repository;
 
@@ -56,13 +57,14 @@ public static class BuilderExtensions
     
     public static WebApplicationBuilder RegisterRepositories(this WebApplicationBuilder builder)
     {
-        // Register your services here
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IGameRepository, GameRepository>();
         return builder;
     }
     
     public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IGameService, GameService>();
         builder.Services.AddTransient<IJwtService, JwtService>();
         
         builder.Services

@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="DTOs\Responses\" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+      <ProjectReference Include="..\Postech.NETT11.PhaseOne.Domain\Postech.NETT11.PhaseOne.Domain.csproj" />
     </ItemGroup>
 
 </Project>
