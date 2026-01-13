@@ -3,100 +3,97 @@ using Postech.NETT11.PhaseOne.Domain.GameStorageAndAcquisition.Enums;
 
 namespace Postech.NETT11.PhaseOne.Domain.GameStorageAndAcquisition;
 
+public class GameBuilder
+{
+    private Game _game;
+
+    public GameBuilder()
+    {
+        _game = new Game();
+    }
+
+    public GameBuilder(Game game)
+    {
+        _game = game;
+    }
+    
+    public Game Build()
+    {
+        //TODO: Validar se game pode ser construido
+        return _game;
+    }
+    
+    public GameBuilder WithName(string name)
+    {
+        _game.Name = name;
+        return this;
+    }
+
+    public GameBuilder WithDescription(string description)
+    {
+        _game.Description = description;
+        return this;
+    }
+    
+    public GameBuilder WithDeveloper(string developer)
+    {
+        _game.Developer = developer;
+        return this;
+    }
+    
+    public GameBuilder WithPublisher(string publisher)
+    {
+        _game.Publisher = publisher;
+        return this;
+    }
+    
+    public GameBuilder WithPrice(decimal price)
+    {
+        _game.Price = price;
+        return this;
+    }
+    
+    public GameBuilder WithReleaseDate(DateTime releaseDate)
+    {
+        _game.ReleaseDate = releaseDate;
+        return this;
+    }
+    
+    public GameBuilder WithStatus(GameStatus status)
+    {
+        _game.Status = status;
+        return this;
+    }
+    
+    public GameBuilder WithCategories(List<GameCategory> categories)
+    {
+        _game.Categories = categories;
+        return this;
+    }
+
+    public GameBuilder AddCategory(GameCategory category)
+    {
+        if (_game.Categories == null)
+            _game.Categories = new List<GameCategory>();
+        _game.Categories.Add(category);
+        return this;
+    }
+}
+
+
 public class Game:BaseEntity
 {
-    public string Name { get; private set; }
-    public string Description { get; private set; }
-    public string Developer { get; private set; }
-    public string Publisher { get; private set; }
-    public decimal? Price { get; private set; }
-    public GameStatus IsActive { get; private set; }
-    public DateTime? ReleaseDate { get; private set; }
+    public string Name { get; internal set; }
+    public string Description { get; internal set; }
+    public string Developer { get; internal set; }
+    public string Publisher { get; internal set; }
+    public decimal? Price { get; internal set; }
+    public GameStatus Status { get; internal set; }
+    public DateTime? ReleaseDate { get; internal set; }
     public List<GameCategory>? Categories { get; set; }
 
-    public Game(string name, string description, string developer, string publisher, decimal price, GameStatus status, DateTime releaseDate)
+    public Game()
     {
-        SetName(name);
-        SetDescription(description);
-        SetDeveloper(developer);
-        SetPublisher(publisher);
-        SetPrice(price);
-        SetReleaseDate(releaseDate);
-        SetStatus(status);
-    }
-
-    private void SetDescription(string description)
-    {
-        Description = description;
-    }
-
-    //Todo: Mudar forma de validação para não usar exceptions
-    private void SetName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Name cannot be null or empty.");
-        }
-        Name = name;
-    }
-    
-    private void SetDeveloper(string developer)
-    {
-        if (string.IsNullOrWhiteSpace(developer))
-        {
-            throw new ArgumentException("Developer cannot be null or empty.");
-        }
-        Developer = developer;
-    }
-
-    private void SetPublisher(string publisher)
-    {
-        if (string.IsNullOrWhiteSpace(publisher))
-        {
-            throw new ArgumentException("Publisher cannot be null or empty.");
-        }
-        Publisher = publisher;
-    }
-    
-    private void SetPrice(decimal price)
-    {
-        if (price < 0)
-        {
-            throw new ArgumentException("Price cannot be negative.");
-        }
-        Price = price;
-    }
-    
-    private void SetReleaseDate(DateTime releaseDate)
-    {
-        if (releaseDate > DateTime.UtcNow)
-        {
-            throw new ArgumentException("Release date cannot be in the future.");
-        }
-        ReleaseDate = releaseDate;
-    }
-    
-    private void SetStatus(GameStatus status)
-    {
-        IsActive = status;
-    }
-    
-    public void AddCategory(GameCategory category)
-    {
-        if (Categories == null)
-        {
-            Categories = new List<GameCategory>();
-        }
-        Categories.Add(category);
-    }
-    
-    public void AddCategories(List<GameCategory> categories)
-    {
-        if (Categories == null)
-        {
-            Categories = new List<GameCategory>();
-        }
         
-        Categories = categories.Union(Categories).ToList();
     }
 }

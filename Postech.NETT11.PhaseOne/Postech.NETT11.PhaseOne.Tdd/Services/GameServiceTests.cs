@@ -1,5 +1,8 @@
+using Castle.Core.Logging;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
+using Postech.NETT11.PhaseOne.Application.DTOs.Requests.Game;
 using Postech.NETT11.PhaseOne.Application.Services;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 using Postech.NETT11.PhaseOne.Domain.GameStorageAndAcquisition;
@@ -11,26 +14,26 @@ namespace Postech.NETT11.PhaseOne.Tests.Services;
 public class GameServiceTests
 {
     private readonly Mock<IGameRepository> _mockRepo;
+    private readonly Mock<ILogger<IGameService>> _mockLogger = new Mock<ILogger<IGameService>>();
     private readonly IGameService _service;
 
     public GameServiceTests()
     {
         _mockRepo = new Mock<IGameRepository>();
-        _service = new GameService(_mockRepo.Object);
+        _service = new GameService(_mockRepo.Object,_mockLogger.Object);
     }
 
     private Game GetValidGame()
-        {
-            return new Game(
-                "Valid name",
-                "Valid Description",
-                "Valid Developer",
-                "Valid Publisher",
-                10,
-                GameStatus.Released,
-                DateTime.UtcNow.AddHours(-1)
-                );
-        }
+    {
+        return new GameBuilder()
+            .WithName("Valid Game")
+            .WithDescription("Valid game description")
+            .WithDeveloper("Valid Developer")
+            .WithPublisher("Valid Publisher")
+            .WithPrice(10m)
+            .WithReleaseDate(DateTime.UtcNow.AddDays(-1))
+            .Build();
+    }
     
     
     // Create Tests
@@ -40,9 +43,17 @@ public class GameServiceTests
         // Arrange
         var game = GetValidGame();
         _mockRepo.Setup(r => r.AddAsync(It.IsAny<Game>())).ReturnsAsync(game);
-
+        var request = new CreateGameRequest()
+        {
+            Name = game.Name,
+            Description = game.Description,
+            Developer = game.Developer,
+            Publisher = game.Publisher,
+            Price = game.Price,
+            ReleaseDate = game.ReleaseDate
+        };
         // Act
-        var result = await _service.AddGameAsync(game);
+        var result = await _service.AddGameAsync(request);
 
         // Assert
         result.Should().NotBeNull();
@@ -65,6 +76,8 @@ public class GameServiceTests
         // Arrange
         var gameId = Guid.CreateVersion7();
         var game = GetValidGame();
+        game.Id = gameId;
+        
         _mockRepo.Setup(r => r.GetByIdAsync(gameId)).ReturnsAsync(game);
 
         // Act
@@ -115,11 +128,23 @@ public class GameServiceTests
     public async Task UpdateGame_WithValidData_ShouldReturnUpdatedGame()
     {
         // Arrange
+        var gameId = Guid.CreateVersion7();
         var game = GetValidGame();
+        var request = new UpdateGameRequest()
+        {
+            Id = gameId,
+            Name = "Updated Game",
+            Description = game.Description,
+            Developer = game.Developer,
+            Publisher = game.Publisher,
+            Price = game.Price,
+            ReleaseDate = game.ReleaseDate
+        };
+        _mockRepo.Setup(r=>r.GetByIdAsync(gameId)).ReturnsAsync(game);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Game>())).ReturnsAsync(game);
 
         // Act
-        var result = await _service.UpdateGameAsync(game);
+        var result = await _service.UpdateGameAsync(request);
 
         // Assert
         result.Should().NotBeNull();
