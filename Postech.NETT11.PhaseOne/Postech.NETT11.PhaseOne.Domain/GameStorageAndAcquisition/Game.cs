@@ -23,9 +23,9 @@ public class GameBuilder
         return _game;
     }
     
-    public GameBuilder WithName(string name)
+    public GameBuilder WithTitle(string title)
     {
-        _game.Name = name;
+        _game.Title = title;
         return this;
     }
 
@@ -80,10 +80,9 @@ public class GameBuilder
     }
 }
 
-
 public class Game:BaseEntity
 {
-    public string Name { get; internal set; }
+    public string Title { get; internal set; }
     public string Description { get; internal set; }
     public string Developer { get; internal set; }
     public string Publisher { get; internal set; }

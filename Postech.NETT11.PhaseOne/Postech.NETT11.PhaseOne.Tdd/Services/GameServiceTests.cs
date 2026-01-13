@@ -26,7 +26,7 @@ public class GameServiceTests
     private Game GetValidGame()
     {
         return new GameBuilder()
-            .WithName("Valid Game")
+            .WithTitle("Valid Game")
             .WithDescription("Valid game description")
             .WithDeveloper("Valid Developer")
             .WithPublisher("Valid Publisher")
@@ -34,7 +34,6 @@ public class GameServiceTests
             .WithReleaseDate(DateTime.UtcNow.AddDays(-1))
             .Build();
     }
-    
     
     // Create Tests
     [Fact]
@@ -45,7 +44,7 @@ public class GameServiceTests
         _mockRepo.Setup(r => r.AddAsync(It.IsAny<Game>())).ReturnsAsync(game);
         var request = new CreateGameRequest()
         {
-            Name = game.Name,
+            Name = game.Title,
             Description = game.Description,
             Developer = game.Developer,
             Publisher = game.Publisher,
@@ -58,6 +57,7 @@ public class GameServiceTests
         // Assert
         result.Should().NotBeNull();
         result.Id.Should().Be(game.Id);
+        result.Should().Be(game);
         _mockRepo.Verify(r => r.AddAsync(It.IsAny<Game>()), Times.Once);
     }
 
@@ -67,6 +67,26 @@ public class GameServiceTests
     {
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => _service.AddGameAsync(null));
+    }
+    
+    [Theory]
+    [InlineData("Valid developer",null)]
+    [InlineData(null,"Valid publisher")]
+    public async Task CreateGame_WithInvalidData_ShouldThrowException(string developer, string publisher)
+    {
+        // Arrange
+        var request = new CreateGameRequest()
+        {
+            Name = "Valid Name",
+            Description = "Valid Description",
+            Developer = developer,
+            Publisher = publisher,
+            Price = 10m,
+            ReleaseDate = DateTime.UtcNow.AddDays(-1)
+        };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() => _service.AddGameAsync(request));
     }
 
     // Read Tests
@@ -148,7 +168,7 @@ public class GameServiceTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Name.Should().Be("Updated Game");
+        result.Title.Should().Be("Updated Game");
         _mockRepo.Verify(r => r.UpdateAsync(It.IsAny<Game>()), Times.Once);
     }
 

@@ -33,7 +33,7 @@ public class GameService(IGameRepository repository,ILogger<IGameService> logger
         }
         
         var game = new GameBuilder()
-            .WithName(request.Name)
+            .WithTitle(request.Name)
             .WithDescription(request.Description)
             .WithDeveloper(request.Developer)
             .WithPublisher(request.Publisher)
@@ -69,7 +69,7 @@ public class GameService(IGameRepository repository,ILogger<IGameService> logger
         var gameBuilder = new GameBuilder(gameToUpdate);
         
         if (request.Name is not null)
-            gameBuilder.WithName(request.Name);
+            gameBuilder.WithTitle(request.Name);
         if (request.Description is not null)
             gameBuilder.WithDescription(request.Description);
         if (request.Developer is not null)
