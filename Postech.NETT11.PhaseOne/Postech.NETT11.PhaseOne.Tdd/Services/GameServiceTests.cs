@@ -5,6 +5,7 @@ using Moq;
 using Postech.NETT11.PhaseOne.Application.DTOs.Requests.Game;
 using Postech.NETT11.PhaseOne.Application.Services;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
+using Postech.NETT11.PhaseOne.Domain.Common;
 using Postech.NETT11.PhaseOne.Domain.GameStorageAndAcquisition;
 using Postech.NETT11.PhaseOne.Domain.GameStorageAndAcquisition.Enums;
 using Xunit;
@@ -25,14 +26,7 @@ public class GameServiceTests
 
     private Game GetValidGame()
     {
-        return new GameBuilder()
-            .WithTitle("Valid Game")
-            .WithDescription("Valid game description")
-            .WithDeveloper("Valid Developer")
-            .WithPublisher("Valid Publisher")
-            .WithPrice(10m)
-            .WithReleaseDate(DateTime.UtcNow.AddDays(-1))
-            .Build();
+        return new Game("Valid Title", "Valid Description", "Valid Developer", "Valid Publisher");
     }
     
     // Create Tests
@@ -70,14 +64,15 @@ public class GameServiceTests
     }
     
     [Theory]
-    [InlineData("Valid developer",null)]
-    [InlineData(null,"Valid publisher")]
-    public async Task CreateGame_WithInvalidData_ShouldThrowException(string developer, string publisher)
+    [InlineData("Valid Name",null,"Valid Publisher")]
+    [InlineData("Valid Name","Valid developer",null)]
+    [InlineData(null,"Valid Developer","Valid publisher")]
+    public async Task CreateGame_WithInvalidData_ShouldThrowException(string name,string developer, string publisher)
     {
         // Arrange
         var request = new CreateGameRequest()
         {
-            Name = "Valid Name",
+            Name = name,
             Description = "Valid Description",
             Developer = developer,
             Publisher = publisher,
@@ -86,7 +81,7 @@ public class GameServiceTests
         };
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _service.AddGameAsync(request));
+        await Assert.ThrowsAsync<DomainException>(() => _service.AddGameAsync(request));
     }
 
     // Read Tests

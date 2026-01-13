@@ -31,16 +31,11 @@ public class GameService(IGameRepository repository,ILogger<IGameService> logger
             logger.LogError("CreateGameRequest is null.");
             throw new ArgumentNullException(nameof(request), "CreateGameRequest cannot be null.");
         }
-        
-        var game = new GameBuilder()
-            .WithTitle(request.Name)
-            .WithDescription(request.Description)
-            .WithDeveloper(request.Developer)
-            .WithPublisher(request.Publisher)
-            .WithPrice(request.Price ?? 0)
-            .WithReleaseDate(request.ReleaseDate ?? DateTime.UtcNow)
-            .WithCategories(request.Categories ?? new List<GameCategory>())
-            .Build();
+
+        var game = new Game(request.Name, request.Description, request.Developer, request.Publisher);
+        game.SetPrice(request.Price ?? 0);
+        game.SetReleaseDate(request.ReleaseDate ?? null);
+        game.AddCategories(request.Categories);
         
         var addedGame = await repository.AddAsync(game);
         
@@ -59,33 +54,28 @@ public class GameService(IGameRepository repository,ILogger<IGameService> logger
         
         var gameToUpdate = await repository.GetByIdAsync(request.Id);
         
-        //TODO: Ajustar para não usar exception
         if (gameToUpdate is null)
         {
             logger.LogWarning("Game with ID {GameId} not found for update.", request.Id);
             throw new KeyNotFoundException($"Game with ID {request.Id} not found.");
         }
         
-        var gameBuilder = new GameBuilder(gameToUpdate);
-        
         if (request.Name is not null)
-            gameBuilder.WithTitle(request.Name);
+            gameToUpdate.UpdateTitle(request.Name);
         if (request.Description is not null)
-            gameBuilder.WithDescription(request.Description);
+            gameToUpdate.UpdateDescription(request.Description);
         if (request.Developer is not null)
-            gameBuilder.WithDeveloper(request.Developer);
+            gameToUpdate.UpdateDeveloper(request.Developer);
         if (request.Publisher is not null)
-            gameBuilder.WithPublisher(request.Publisher);
+            gameToUpdate.UpdatePublisher(request.Publisher);
         if (request.Price.HasValue)
-            gameBuilder.WithPrice(request.Price.Value);
+            gameToUpdate.SetPrice(request.Price.Value);
         if (request.ReleaseDate.HasValue)
-            gameBuilder.WithReleaseDate(request.ReleaseDate.Value);
+            gameToUpdate.SetReleaseDate(request.ReleaseDate.Value);
         if (request.Categories is not null)
-            gameBuilder.WithCategories(request.Categories);
+            gameToUpdate.AddCategories(request.Categories);
         
-        var game = gameBuilder.Build();
-        
-        var updatedGame = await repository.UpdateAsync(game);
+        var updatedGame = await repository.UpdateAsync(gameToUpdate);
         
         logger.LogDebug("Updated game with ID {GameId}.", request.Id);
         

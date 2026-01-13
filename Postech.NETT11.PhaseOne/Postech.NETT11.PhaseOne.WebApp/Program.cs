@@ -15,7 +15,6 @@ try
     Log.Information("Starting Postech.NETT11.PhaseOne application");
 
     var builder = WebApplication.CreateBuilder(args);
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     
     builder
         .RegisterAuth()
