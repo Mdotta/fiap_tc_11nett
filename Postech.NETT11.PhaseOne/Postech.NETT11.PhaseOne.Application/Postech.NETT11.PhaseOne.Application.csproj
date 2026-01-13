@@ -15,4 +15,8 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Postech.NETT11.PhaseOne.Domain\Postech.NETT11.PhaseOne.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

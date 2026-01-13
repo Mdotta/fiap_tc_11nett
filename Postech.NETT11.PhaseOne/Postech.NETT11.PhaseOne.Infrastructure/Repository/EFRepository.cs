@@ -14,30 +14,34 @@ public class EFRepository<T>:IRepository<T> where T: BaseEntity
         _context = context;
         _dbSet = _context.Set<T>();
     }
-    public IList<T> GetAll()
-        => _dbSet.ToList();
+    public async Task<IEnumerable<T>> GetAllAsync()
+        => await _dbSet.ToListAsync();
 
-    public T? GetById(Guid id) 
-        => _dbSet.FirstOrDefault(x => x.Id == id);
+    public async Task<T?> GetByIdAsync(Guid id) 
+        => await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
 
-    public void Add(T entity)
+    public async Task<T> AddAsync(T entity)
     {
         entity.CreatedAt = DateTime.UtcNow;
-        _dbSet.Add(entity);
-        _context.SaveChanges();
+        var result = _dbSet.Add(entity);
+        await _context.SaveChangesAsync();
+        return result.Entity;
     }
 
-    public void Update(T entity)
+    public async Task<T> UpdateAsync(T entity)
     {
-        _dbSet.Update(entity);
-        _context.SaveChanges();
+        var result = _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
+        return result.Entity;
     }
 
-    public void Delete(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        if(GetById(id) is not T entity)
-            return;
+        if (GetByIdAsync(id) is not T entity)
+            return false;
         _dbSet.Remove(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
+        return true;
+
     }
 }
