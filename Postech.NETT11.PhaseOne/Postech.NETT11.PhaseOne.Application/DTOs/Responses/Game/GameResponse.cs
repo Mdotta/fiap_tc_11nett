@@ -8,7 +8,5 @@ public sealed record GameResponse(
     string Description,
     string Developer,
     string Publisher,
-    decimal? Price,
-    DateTime? ReleaseDate,
-    List<GameCategory>? Categories
+    decimal? Price
 );

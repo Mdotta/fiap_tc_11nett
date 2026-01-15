@@ -10,6 +10,6 @@ public interface IGameService
     Task<GameResponse?> GetGameByIdAsync(Guid id);
     
     Task<GameResponse> AddGameAsync(CreateGameRequest game);
-    Task<GameResponse> UpdateGameAsync(UpdateGameRequest game);
+    Task<GameResponse> UpdateGameAsync(Guid id,UpdateGameRequest game);
     Task<bool> DeleteGameAsync(Guid id);
 }

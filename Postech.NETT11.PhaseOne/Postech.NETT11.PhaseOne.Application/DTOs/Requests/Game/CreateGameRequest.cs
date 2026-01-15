@@ -9,6 +9,4 @@ public sealed record CreateGameRequest
     public string Developer { get; set; }
     public string Publisher { get; set; }
     public decimal? Price { get; set; }
-    public DateTime? ReleaseDate { get;  set; }
-    public List<GameCategory>? Categories { get; set; }
 }

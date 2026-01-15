@@ -30,30 +30,30 @@ public class GameRoute:BaseRoute
             .WithOpenApi()
             .RequireAuthorization("Admin");
         
-        group.MapPut("/", UpdateGameAsync)
+        group.MapPut("/{id:guid}", UpdateGameAsync)
             .WithName("updateGame")
             .WithOpenApi()
             .RequireAuthorization("Admin");
         
-        group.MapDelete("/{gameId:guid}",DeleteGameAsync)
+        group.MapDelete("/{id:guid}",DeleteGameAsync)
             .WithName("deleteGame")
             .WithOpenApi()
             .RequireAuthorization("Admin");
     }
 
-    private async Task<NoContent> DeleteGameAsync([FromHeader]Guid gameId, IGameService service)
+    private async Task<NoContent> DeleteGameAsync(Guid id, IGameService service)
     {
-        await service.DeleteGameAsync(gameId);
+        var deleteResult = await service.DeleteGameAsync(id);
         return TypedResults.NoContent();
     }
 
-    private async Task<Ok<GameResponse>> UpdateGameAsync(UpdateGameRequest request, IGameService service)
+    private async Task<Ok<GameResponse>> UpdateGameAsync(Guid id,UpdateGameRequest request, IGameService service)
     {
-        var updatedGame = await service.UpdateGameAsync(request);
+        var updatedGame = await service.UpdateGameAsync(id,request);
         return TypedResults.Ok(updatedGame);
     }
 
-    private async Task<Results<Ok<GameResponse>,NotFound>> GetGameById([FromHeader]Guid gameId, IGameService service)
+    private async Task<Results<Ok<GameResponse>,NotFound>> GetGameById(Guid gameId, IGameService service)
     {
         var game = await service.GetGameByIdAsync(gameId);
         if (game is null)

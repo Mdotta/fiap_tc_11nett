@@ -42,8 +42,7 @@ public class GameServiceTests
             Description = game.Description,
             Developer = game.Developer,
             Publisher = game.Publisher,
-            Price = game.Price,
-            ReleaseDate = game.ReleaseDate
+            Price = game.Price
         };
         // Act
         var result = await _service.AddGameAsync(request);
@@ -75,8 +74,7 @@ public class GameServiceTests
             Description = "Valid Description",
             Developer = developer,
             Publisher = publisher,
-            Price = 10m,
-            ReleaseDate = DateTime.UtcNow.AddDays(-1)
+            Price = 10m
         };
 
         // Act & Assert
@@ -146,19 +144,17 @@ public class GameServiceTests
         var game = GetValidGame();
         var request = new UpdateGameRequest()
         {
-            Id = gameId,
             Name = "Updated Game",
             Description = game.Description,
             Developer = game.Developer,
             Publisher = game.Publisher,
-            Price = game.Price,
-            ReleaseDate = game.ReleaseDate
+            Price = game.Price
         };
         _mockRepo.Setup(r=>r.GetByIdAsync(gameId)).ReturnsAsync(game);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Game>())).ReturnsAsync(game);
 
         // Act
-        var result = await _service.UpdateGameAsync(request);
+        var result = await _service.UpdateGameAsync(gameId,request);
 
         // Assert
         result.Should().NotBeNull();
@@ -169,8 +165,11 @@ public class GameServiceTests
     [Fact]
     public async Task UpdateGame_WithNullGame_ShouldThrowArgumentNullException()
     {
+        // Arrange
+        var gameId = Guid.CreateVersion7();
+        
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateGameAsync(null));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateGameAsync(gameId,null));
     }
 
     // Delete Tests

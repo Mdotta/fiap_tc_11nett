@@ -36,10 +36,6 @@ public class GameConfiguration:IEntityTypeConfiguration<Game>
             .HasColumnType("DECIMAL(18,2)")
             .IsRequired();
         
-        builder.Property(x => x.ReleaseDate)
-            .HasColumnType("DATETIME2")
-            .IsRequired();
-        
         builder.Property(x => x.CreatedAt)
             .HasColumnType("DATETIME2")
             .HasDefaultValueSql("GETDATE()")
@@ -51,22 +47,5 @@ public class GameConfiguration:IEntityTypeConfiguration<Game>
                 v => v.ToString(),
                 v => Enum.Parse<GameStatus>(v))
             .IsRequired();
-
-        builder.Property(x => x.Categories)
-            .HasColumnType("NVARCHAR(100)")
-            .HasConversion(
-                v => v == null || !v.Any() ? string.Empty : string.Join(",", v.Select(c => c.ToString())),
-                v => string.IsNullOrWhiteSpace(v)
-                    ? new List<GameCategory>()
-                    : v.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                        .Select(c => Enum.Parse<GameCategory>(c))
-                        .ToList())
-            .IsRequired(false)
-            .Metadata.SetValueComparer(
-                new ValueComparer<List<GameCategory>>(
-                    (c1, c2) => c1!.SequenceEqual(c2!),
-                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c.ToList()));
-
     }
 }
