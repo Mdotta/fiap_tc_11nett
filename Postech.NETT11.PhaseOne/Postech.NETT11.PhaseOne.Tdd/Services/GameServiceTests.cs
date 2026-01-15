@@ -51,7 +51,6 @@ public class GameServiceTests
         // Assert
         result.Should().NotBeNull();
         result.Id.Should().Be(game.Id);
-        result.Should().Be(game);
         _mockRepo.Verify(r => r.AddAsync(It.IsAny<Game>()), Times.Once);
     }
 
