@@ -14,10 +14,10 @@ public class EFRepository<T>:IRepository<T> where T: BaseEntity
         _context = context;
         _dbSet = _context.Set<T>();
     }
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
         => await _dbSet.ToListAsync();
 
-    public async Task<T?> GetByIdAsync(Guid id) 
+    public virtual async Task<T?> GetByIdAsync(Guid id) 
         => await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
 
     public async Task<T> AddAsync(T entity)
@@ -35,9 +35,9 @@ public class EFRepository<T>:IRepository<T> where T: BaseEntity
         return result.Entity;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public virtual async Task<bool> DeleteAsync(Guid id)
     {
-        if (GetByIdAsync(id) is not T entity)
+        if (await GetByIdAsync(id) is not T entity)
             return false;
         _dbSet.Remove(entity);
         await _context.SaveChangesAsync();

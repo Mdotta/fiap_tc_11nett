@@ -40,6 +40,11 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
                 v => Enum.Parse<UserRole>(v))
             .IsRequired();
 
+        builder.Property(x => x.IsActive)
+            .HasColumnType("BIT")
+            .HasDefaultValue(true)
+            .IsRequired();
+
         AddStartingData(builder);
     }
 
@@ -52,7 +57,8 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
             UserHandle = "admin",
             Username = "admin",
             PasswordHash = "tempPass",
-            Role = UserRole.Admin
+            Role = UserRole.Admin,
+            IsActive = true
         };
         
         var userClient = new User()
@@ -62,7 +68,8 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
             UserHandle = "client",
             Username = "client",
             PasswordHash = "tempPass",
-            Role = UserRole.Client
+            Role = UserRole.Client,
+            IsActive = true
         };
         
         builder.HasData(userAdmin, userClient);
