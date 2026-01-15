@@ -28,15 +28,6 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "CreatedAt", "PasswordHash", "Role", "UserHandle", "Username" },
-                values: new object[,]
-                {
-                    { new Guid("4d9c6bd6-821a-40f0-b2b9-64683b5e91e1"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tempPass", "Client", "client", "client" },
-                    { new Guid("6c511c9f-cae7-4d08-8101-f8af7c81357a"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "tempPass", "Admin", "admin", "admin" }
-                });
         }
 
         /// <inheritdoc />

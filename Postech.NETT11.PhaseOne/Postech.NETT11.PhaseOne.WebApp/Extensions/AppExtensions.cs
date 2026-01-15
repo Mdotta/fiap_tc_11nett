@@ -18,7 +18,11 @@ public static class AppExtensions
             {
                 options.Authentication = new ScalarAuthenticationOptions()
                 {
-                    
+                    PreferredSecurityScheme = "Bearer",
+                    ApiKey = new ApiKeyOptions
+                    {
+                        Token = ""
+                    }
                 };
             });
         }

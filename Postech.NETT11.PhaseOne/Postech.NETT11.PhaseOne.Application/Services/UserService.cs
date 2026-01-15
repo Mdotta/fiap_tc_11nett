@@ -31,7 +31,11 @@ public class UserService : IUserService
     public async Task<UserResponse> CreateUserAsync(CreateUserRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-
+        
+        var usernameInUse = await _userRepository.UsernameExistsAsync(request.Username);
+        if (usernameInUse)
+            throw new InvalidOperationException($"Username '{request.Username}' is already in use.");
+        
         var user = new User
         {
             UserHandle = request.UserHandle,
@@ -47,16 +51,22 @@ public class UserService : IUserService
     public async Task<UserResponse?> UpdateUserAsync(Guid id, UpdateUserRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-
+        
         var user = await _userRepository.GetByIdAsync(id);
         if (user == null)
             return null;
-
+        
         if (request.UserHandle != null)
             user.UserHandle = request.UserHandle;
-        
+
         if (request.Username != null)
+        {
+            var usernameInUse = await _userRepository.UsernameExistsAsync(request.Username, id);
+            if (usernameInUse)
+                throw new InvalidOperationException($"Username '{request.Username}' is already in use.");
+            
             user.Username = request.Username;
+        }
         
         if (request.Password != null)
             user.PasswordHash = _passwordHasher.HashPassword(request.Password);

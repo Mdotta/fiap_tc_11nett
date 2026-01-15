@@ -5,5 +5,7 @@ namespace Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
 
 public interface IUserRepository:IRepository<User>
 {
-    User? GetByCredentials(string username, string passwordHash);
+    Task<User?> GetByUsername(string username);
+    
+    Task<bool> UsernameExistsAsync(string username,Guid? excludeUserId = null);
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using Postech.NETT11.PhaseOne.Application.Services;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
@@ -51,6 +52,21 @@ public static class BuilderExtensions
         builder.Services.AddOpenApi(options =>
         {
             options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                document.Components ??= new();
+                document.Components.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>
+                {
+                    ["Bearer"] = new()
+                    {
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer",
+                        BearerFormat = "JWT",
+                        Description = "Enter JWT Bearer token"
+                    }
+                };
+                return Task.CompletedTask;
+            });
         });
         return builder;
     }

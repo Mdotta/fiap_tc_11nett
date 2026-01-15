@@ -28,22 +28,22 @@ public class GameRoute:BaseRoute
         group.MapPost("/", CreateGameAsync)
             .WithName("createGame")
             .WithOpenApi()
-            .RequireAuthorization();
+            .RequireAuthorization("Admin");
         
         group.MapPut("/", UpdateGameAsync)
             .WithName("updateGame")
             .WithOpenApi()
-            .RequireAuthorization();
+            .RequireAuthorization("Admin");
         
         group.MapDelete("/{gameId:guid}",DeleteGameAsync)
             .WithName("deleteGame")
             .WithOpenApi()
-            .RequireAuthorization();
+            .RequireAuthorization("Admin");
     }
 
     private async Task<NoContent> DeleteGameAsync([FromHeader]Guid gameId, IGameService service)
     {
-        var deleteResult = await service.DeleteGameAsync(gameId); //TODO: possivel validar se foi deletado
+        var deleteResult = await service.DeleteGameAsync(gameId);
         return TypedResults.NoContent();
     }
 

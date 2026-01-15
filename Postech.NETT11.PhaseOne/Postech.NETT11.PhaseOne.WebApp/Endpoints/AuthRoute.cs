@@ -19,13 +19,12 @@ public class AuthRoute:BaseRoute
             .AllowAnonymous();
     }
 
-    IResult Authenticate(AuthRequest request, IJwtService jwtService, IUserRepository userRepository, IPasswordHasher passwordHasher, ILogger<AuthRoute> logger)
+    private async Task<IResult> Authenticate(AuthRequest request, IJwtService jwtService, IUserRepository userRepository, IPasswordHasher passwordHasher, ILogger<AuthRoute> logger)
     {
+        //TODO: criar serviço de autenticação
         logger.LogInformation("Authenticating user: {Username}", request.Username);
-        var hashPass = request.Password;
-        var user = userRepository.GetByCredentials(request.Username, hashPass);
+        var user = await userRepository.GetByUsername(request.Username);
         if (user == null || !passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
-
         {
             logger.LogInformation("User {Username} not found or invalid password", request.Username);
             return TypedResults.Unauthorized();

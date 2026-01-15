@@ -33,16 +33,18 @@ public class UserRoute : BaseRoute
             .WithName("CreateUser")
             .WithOpenApi()
             .RequireAuthorization();
-
+        
+        //TODO: Criar update route para o proprio usuario alterar seus dados (excluindo role)
+        
         group.MapPut("/{id:guid}", UpdateUser)
             .WithName("UpdateUser")
             .WithOpenApi()
-            .RequireAuthorization();
+            .RequireAuthorization("Admin");
 
         group.MapDelete("/{id:guid}", DeleteUser)
             .WithName("DeleteUser")
             .WithOpenApi()
-            .RequireAuthorization();
+            .RequireAuthorization("Admin");
     }
 
     private async Task<IResult> GetAuthenticatedUserData(

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
+using Postech.NETT11.PhaseOne.Domain.Common;
 using Postech.NETT11.PhaseOne.Domain.Entities;
 using Postech.NETT11.PhaseOne.Domain.Repositories;
 
@@ -10,16 +11,17 @@ public class UserRepository:EFRepository<User>, IUserRepository
     public UserRepository(AppDbContext context) : base(context)
     {
     }
+    
     public override async Task<IEnumerable<User>> GetAllAsync()
     {
-        var query = _dbSet.AsQueryable();
+        var query = _dbSet.AsQueryable().AsNoTracking();
         query = query.Where(x => x.IsActive == true);
         return await query.ToListAsync();
     }
 
     public override async Task<User?> GetByIdAsync(Guid id)
     {
-        var query = _dbSet.AsQueryable();
+        var query = _dbSet.AsQueryable().AsNoTracking();
         query = query.Where(x => x.IsActive == true);
         return await query.FirstOrDefaultAsync(x => x.Id == id);
     }
@@ -38,13 +40,15 @@ public class UserRepository:EFRepository<User>, IUserRepository
         return true;
     }
 
-    public User? GetByCredentials(string username, string passwordHash)
+    public async Task<User?> GetByUsername(string username)
     {
-        var query = _dbSet.AsQueryable();
-        query = query.Where(x => x.IsActive == true);
-        
-        return query.FirstOrDefault(x => 
-            x.Username == username && 
-            x.PasswordHash == passwordHash);
+        var user = await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Username == username);
+        return user;
+    }
+
+    public async Task<bool> UsernameExistsAsync(string username,Guid? excludeUserId = null)
+
+    {
+        return await _dbSet.AsNoTracking().AnyAsync(x=>x.Username==username && x.IsActive && x.Id != excludeUserId);
     }
 }
