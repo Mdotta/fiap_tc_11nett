@@ -31,7 +31,7 @@ public class UserRepository:EFRepository<User>, IUserRepository
             return false;
 
         if (!user.IsActive)
-            throw new Exception("User is already deleted");
+            throw new DomainException("User is already deleted");
 
         user.IsActive = false;
         await _context.SaveChangesAsync();
