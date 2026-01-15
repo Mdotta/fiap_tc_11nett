@@ -30,6 +30,8 @@ public class UserService : IUserService
 
     public async Task<UserResponse> CreateUserAsync(CreateUserRequest request)
     {
+        //TODO: validar segurança da senha
+        //TODO: allow anonymous create user
         ArgumentNullException.ThrowIfNull(request);
         
         var usernameInUse = await _userRepository.UsernameExistsAsync(request.Username);
@@ -40,8 +42,7 @@ public class UserService : IUserService
         {
             UserHandle = request.UserHandle,
             Username = request.Username,
-            PasswordHash = _passwordHasher.HashPassword(request.Password),
-            Role = request.Role
+            PasswordHash = _passwordHasher.HashPassword(request.Password)
         };
 
         var createdUser = await _userRepository.AddAsync(user);
@@ -85,6 +86,7 @@ public class UserService : IUserService
 
     private static UserResponse MapToResponse(User user)
     {
+        //TODO: incorporar email com validação
         return new UserResponse(
             user.Id,
             user.UserHandle,

@@ -84,6 +84,7 @@ public static class BuilderExtensions
         builder.Services.AddTransient<IJwtService, JwtService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
         
         builder.Services
             .AddEndpointsApiExplorer();

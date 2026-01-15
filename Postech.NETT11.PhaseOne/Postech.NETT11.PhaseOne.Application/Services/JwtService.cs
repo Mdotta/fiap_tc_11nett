@@ -3,13 +3,14 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Postech.NETT11.PhaseOne.Application.DTOs.Responses.Auth;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 
 namespace Postech.NETT11.PhaseOne.Application.Services;
 
 public class JwtService(IConfiguration configuration):IJwtService
 {
-    public string GenerateToken(string userId, string role)
+    public TokenData GenerateToken(string userId, string role)
     {
         var claims = new[]
         {
@@ -25,12 +26,17 @@ public class JwtService(IConfiguration configuration):IJwtService
         
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        
+        var expiresAt = DateTime.UtcNow.AddMinutes(int.Parse(expiresInMinutes));
+        
         var token = new JwtSecurityToken(
             issuer: configuration["Jwt:Issuer"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(int.Parse(expiresInMinutes)),
+            expires: expiresAt,
             signingCredentials: creds);
         
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        
+        return new TokenData(tokenString, expiresAt);
     }
 }

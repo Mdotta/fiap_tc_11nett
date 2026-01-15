@@ -52,8 +52,7 @@ public class UserServiceTests
         var request = new CreateUserRequest(
             user.UserHandle,
             user.Username,
-            "plainpassword",
-            user.Role
+            "plainpassword"
         );
 
         // Act
@@ -74,7 +73,35 @@ public class UserServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => _service.CreateUserAsync(null!));
     }
+    
+    [Fact]
+    public async Task CreateUser_ShouldSetDefaultRoleToClient()
+    {
+        // Arrange
+        var user = GetValidUser();
+        var hashedPassword = "hashedpassword123";
+        _mockPasswordHasher.Setup(p => p.HashPassword(It.IsAny<string>())).Returns(hashedPassword);
+        _mockRepo.Setup(r => r.AddAsync(It.IsAny<User>())).ReturnsAsync((User u) =>
+        {
+            u.PasswordHash = hashedPassword;
+            return u;
+        });
 
+        var request = new CreateUserRequest(
+            user.UserHandle,
+            user.Username,
+            "plainpassword"
+        );
+
+        // Act
+        var result = await _service.CreateUserAsync(request);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Role.Should().Be(UserRole.Client);
+        _mockRepo.Verify(r => r.AddAsync(It.Is<User>(u => u.Role == UserRole.Client)), Times.Once);
+    }
+    
     // Read Tests
     [Fact]
     public async Task GetUserById_WithExistingId_ShouldReturnUser()
