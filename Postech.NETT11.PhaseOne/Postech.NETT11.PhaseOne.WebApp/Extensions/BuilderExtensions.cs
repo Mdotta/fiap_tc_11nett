@@ -66,6 +66,8 @@ public static class BuilderExtensions
     {
         builder.Services.AddScoped<IGameService, GameService>();
         builder.Services.AddTransient<IJwtService, JwtService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
         
         builder.Services
             .AddEndpointsApiExplorer();
