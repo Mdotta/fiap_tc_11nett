@@ -8,4 +8,6 @@ public interface IUserRepository:IRepository<User>
     Task<User?> GetByUsername(string username);
     
     Task<bool> UsernameExistsAsync(string username,Guid? excludeUserId = null);
+    
+    Task<bool> EmailExistsAsync(string email, Guid? excludeUserId = null);
 }

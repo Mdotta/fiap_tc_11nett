@@ -32,10 +32,9 @@ public class UserRoute : BaseRoute
         group.MapPost("/", CreateUser)
             .WithName("CreateUser")
             .WithOpenApi()
-            .RequireAuthorization();
+            .AllowAnonymous();
         
         //TODO: Criar update route para o proprio usuario alterar seus dados (excluindo role)
-        
         group.MapPut("/{id:guid}", UpdateUser)
             .WithName("UpdateUser")
             .WithOpenApi()

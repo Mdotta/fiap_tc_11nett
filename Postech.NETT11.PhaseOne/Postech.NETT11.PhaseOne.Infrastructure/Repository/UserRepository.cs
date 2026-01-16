@@ -47,8 +47,12 @@ public class UserRepository:EFRepository<User>, IUserRepository
     }
 
     public async Task<bool> UsernameExistsAsync(string username,Guid? excludeUserId = null)
-
     {
         return await _dbSet.AsNoTracking().AnyAsync(x=>x.Username==username && x.IsActive && x.Id != excludeUserId);
+    }
+
+    public async Task<bool> EmailExistsAsync(string email, Guid? excludeUserId = null)
+    {
+        return await _dbSet.AsNoTracking().AnyAsync(x => x.Email == email && x.IsActive && x.Id != excludeUserId);
     }
 }

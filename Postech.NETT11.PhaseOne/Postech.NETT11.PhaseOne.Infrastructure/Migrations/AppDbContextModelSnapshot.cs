@@ -33,6 +33,10 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                         .HasColumnType("DATETIME2")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("BIT")

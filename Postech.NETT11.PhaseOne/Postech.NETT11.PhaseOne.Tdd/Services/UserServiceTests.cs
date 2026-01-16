@@ -29,6 +29,7 @@ public class UserServiceTests
         {
             UserHandle = "validhandle",
             Username = "validuser",
+            Email = "valid@example.com",
             PasswordHash = "hashedpassword",
             Role = UserRole.Client,
             IsActive = true
@@ -43,6 +44,8 @@ public class UserServiceTests
         var user = GetValidUser();
         var hashedPassword = "hashedpassword123";
         _mockPasswordHasher.Setup(p => p.HashPassword(It.IsAny<string>())).Returns(hashedPassword);
+        _mockRepo.Setup(r => r.UsernameExistsAsync(It.IsAny<string>(), null)).ReturnsAsync(false);
+        _mockRepo.Setup(r => r.EmailExistsAsync(It.IsAny<string>(), null)).ReturnsAsync(false);
         _mockRepo.Setup(r => r.AddAsync(It.IsAny<User>())).ReturnsAsync((User u) =>
         {
             u.PasswordHash = hashedPassword;
@@ -52,7 +55,8 @@ public class UserServiceTests
         var request = new CreateUserRequest(
             user.UserHandle,
             user.Username,
-            "plainpassword"
+            "valid@example.com",
+            "S@fePassword1!"
         );
 
         // Act
@@ -62,8 +66,9 @@ public class UserServiceTests
         result.Should().NotBeNull();
         result.UserHandle.Should().Be(user.UserHandle);
         result.Username.Should().Be(user.Username);
+        result.Email.Should().Be("valid@example.com");
         result.Role.Should().Be(user.Role);
-        _mockPasswordHasher.Verify(p => p.HashPassword("plainpassword"), Times.Once);
+        _mockPasswordHasher.Verify(p => p.HashPassword("S@fePassword1!"), Times.Once);
         _mockRepo.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Once);
     }
 
@@ -79,8 +84,10 @@ public class UserServiceTests
     {
         // Arrange
         var user = GetValidUser();
-        var hashedPassword = "hashedpassword123";
+        var hashedPassword = "S@fePassword1!";
         _mockPasswordHasher.Setup(p => p.HashPassword(It.IsAny<string>())).Returns(hashedPassword);
+        _mockRepo.Setup(r => r.UsernameExistsAsync(It.IsAny<string>(), null)).ReturnsAsync(false);
+        _mockRepo.Setup(r => r.EmailExistsAsync(It.IsAny<string>(), null)).ReturnsAsync(false);
         _mockRepo.Setup(r => r.AddAsync(It.IsAny<User>())).ReturnsAsync((User u) =>
         {
             u.PasswordHash = hashedPassword;
@@ -90,7 +97,8 @@ public class UserServiceTests
         var request = new CreateUserRequest(
             user.UserHandle,
             user.Username,
-            "plainpassword"
+            "valid@example.com",
+            "S@fePassword1!"
         );
 
         // Act
@@ -172,11 +180,13 @@ public class UserServiceTests
         var request = new UpdateUserRequest(
             "updatedhandle",
             "updateduser",
+            "updated@example.com",
             null,
             UserRole.Admin
         );
 
         _mockRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
+        _mockRepo.Setup(r => r.EmailExistsAsync(It.IsAny<string>(), userId)).ReturnsAsync(false);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<User>())).ReturnsAsync((User u) => u);
 
         // Act
@@ -198,16 +208,17 @@ public class UserServiceTests
         var userId = Guid.CreateVersion7();
         var user = GetValidUser();
         user.Id = userId;
-        var newHashedPassword = "newhashedpassword123";
+        var newHashedPassword = "S@fePassword32!";
 
         var request = new UpdateUserRequest(
             null,
             null,
-            "newpassword",
+            null,
+            "S@fePassword1!",
             null
         );
 
-        _mockPasswordHasher.Setup(p => p.HashPassword("newpassword")).Returns(newHashedPassword);
+        _mockPasswordHasher.Setup(p => p.HashPassword("S@fePassword1!")).Returns(newHashedPassword);
         _mockRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<User>())).ReturnsAsync((User u) => u);
 
@@ -216,7 +227,7 @@ public class UserServiceTests
 
         // Assert
         result.Should().NotBeNull();
-        _mockPasswordHasher.Verify(p => p.HashPassword("newpassword"), Times.Once);
+        _mockPasswordHasher.Verify(p => p.HashPassword("S@fePassword1!"), Times.Once);
         _mockRepo.Verify(r => r.UpdateAsync(It.Is<User>(u => u.PasswordHash == newHashedPassword)), Times.Once);
     }
 
@@ -232,6 +243,7 @@ public class UserServiceTests
 
         var request = new UpdateUserRequest(
             "newhandle",
+            null,
             null,
             null,
             null
@@ -255,7 +267,7 @@ public class UserServiceTests
     {
         // Arrange
         var userId = Guid.CreateVersion7();
-        var request = new UpdateUserRequest("newhandle", null, null, null);
+        var request = new UpdateUserRequest("newhandle", null, null, null, null);
 
         _mockRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync((User?)null);
 

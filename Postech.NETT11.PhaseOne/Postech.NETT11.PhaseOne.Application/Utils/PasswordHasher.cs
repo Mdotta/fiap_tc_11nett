@@ -1,7 +1,6 @@
-using BCrypt.Net;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 
-namespace Postech.NETT11.PhaseOne.Application.Services;
+namespace Postech.NETT11.PhaseOne.Application.Utils;
 
 public class PasswordHasher : IPasswordHasher
 {

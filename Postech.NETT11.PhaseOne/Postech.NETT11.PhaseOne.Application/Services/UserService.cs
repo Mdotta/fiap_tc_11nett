@@ -1,6 +1,7 @@
 using Postech.NETT11.PhaseOne.Application.DTOs.Requests.User;
 using Postech.NETT11.PhaseOne.Application.DTOs.Responses.User;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
+using Postech.NETT11.PhaseOne.Application.Utils;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
 
 namespace Postech.NETT11.PhaseOne.Application.Services;
@@ -30,18 +31,27 @@ public class UserService : IUserService
 
     public async Task<UserResponse> CreateUserAsync(CreateUserRequest request)
     {
-        //TODO: validar segurança da senha
-        //TODO: allow anonymous create user
         ArgumentNullException.ThrowIfNull(request);
+        
+        // Validar segurança da senha
+        PasswordValidator.ValidateAndThrow(request.Password);
+        
+        // Validar formato do email
+        EmailValidator.ValidateAndThrow(request.Email);
         
         var usernameInUse = await _userRepository.UsernameExistsAsync(request.Username);
         if (usernameInUse)
             throw new InvalidOperationException($"Username '{request.Username}' is already in use.");
         
+        var emailInUse = await _userRepository.EmailExistsAsync(request.Email);
+        if (emailInUse)
+            throw new InvalidOperationException($"Email '{request.Email}' is already in use.");
+        
         var user = new User
         {
             UserHandle = request.UserHandle,
             Username = request.Username,
+            Email = request.Email,
             PasswordHash = _passwordHasher.HashPassword(request.Password)
         };
 
@@ -69,8 +79,24 @@ public class UserService : IUserService
             user.Username = request.Username;
         }
         
+        if (request.Email != null)
+        {
+            // Validar formato do email
+            EmailValidator.ValidateAndThrow(request.Email);
+            
+            var emailInUse = await _userRepository.EmailExistsAsync(request.Email, id);
+            if (emailInUse)
+                throw new InvalidOperationException($"Email '{request.Email}' is already in use.");
+            
+            user.Email = request.Email;
+        }
+        
         if (request.Password != null)
+        {
+            // Validar segurança da senha
+            PasswordValidator.ValidateAndThrow(request.Password);
             user.PasswordHash = _passwordHasher.HashPassword(request.Password);
+        }
         
         if (request.Role.HasValue)
             user.Role = request.Role.Value;
@@ -86,11 +112,11 @@ public class UserService : IUserService
 
     private static UserResponse MapToResponse(User user)
     {
-        //TODO: incorporar email com validação
         return new UserResponse(
             user.Id,
             user.UserHandle,
             user.Username,
+            user.Email,
             user.Role,
             user.CreatedAt
         );
