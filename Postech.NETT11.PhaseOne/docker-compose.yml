@@ -9,10 +9,11 @@ services:
     ports:
       - "2022:1433"
     healthcheck:
-      test: ["CMD-SHELL","/opt/mssql-tools/bin/sqlcmd", "-C", "-S", "localhost", "-U", "sa", "-P", "$${SA_PASSWORD}", "-Q", "SELECT 1"]
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$${SA_PASSWORD}\" -Q \"SELECT 1\" || exit 1"]
       interval: 10s
-      timeout: 10s
+      timeout: 5s
       retries: 10
+      start_period: 15s
     volumes:
       - sqlserver-data:/var/opt/mssql
     networks:
@@ -68,8 +69,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - sqlserver
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     networks:
@@ -97,10 +97,8 @@ services:
     volumes:
       - kibana-data:/usr/share/kibana/data
     depends_on:
-      sqlserver:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
+      - sqlserver
+      - elasticsearch
     networks:
       - postech-network
     healthcheck:

@@ -1,6 +1,8 @@
+using Postech.NETT11.PhaseOne.Application.DTOs.Responses.Auth;
+
 namespace Postech.NETT11.PhaseOne.Application.Services.Interfaces;
 
 public interface IJwtService
 {
-    public string GenerateToken(string userId, string userName);
+    TokenData GenerateToken(string userId, string role);
 }

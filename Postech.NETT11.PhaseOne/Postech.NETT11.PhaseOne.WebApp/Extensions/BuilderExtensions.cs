@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using Postech.NETT11.PhaseOne.Application.Services;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
+using Postech.NETT11.PhaseOne.Application.Utils;
 using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
 using Postech.NETT11.PhaseOne.Domain.GameStorageAndAcquisition;
 using Postech.NETT11.PhaseOne.Infrastructure;
@@ -51,6 +53,21 @@ public static class BuilderExtensions
         builder.Services.AddOpenApi(options =>
         {
             options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                document.Components ??= new();
+                document.Components.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>
+                {
+                    ["Bearer"] = new()
+                    {
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer",
+                        BearerFormat = "JWT",
+                        Description = "Enter JWT Bearer token"
+                    }
+                };
+                return Task.CompletedTask;
+            });
         });
         return builder;
     }
@@ -68,6 +85,7 @@ public static class BuilderExtensions
         builder.Services.AddTransient<IJwtService, JwtService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
         
         builder.Services
             .AddEndpointsApiExplorer();

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Postech.NETT11.PhaseOne.Infrastructure;
 
@@ -11,9 +12,11 @@ using Postech.NETT11.PhaseOne.Infrastructure;
 namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260115114355_SeedInitialUsers")]
+    partial class SeedInitialUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,10 +35,6 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIME2")
                         .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -69,6 +68,9 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("UNIQUEIDENTIFIER");
 
+                    b.Property<string>("Categories")
+                        .HasColumnType("NVARCHAR(100)");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIME2")
@@ -88,6 +90,9 @@ namespace Postech.NETT11.PhaseOne.Infrastructure.Migrations
                     b.Property<string>("Publisher")
                         .IsRequired()
                         .HasColumnType("NVARCHAR(100)");
+
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("DATETIME2");
 
                     b.Property<string>("Status")
                         .IsRequired()

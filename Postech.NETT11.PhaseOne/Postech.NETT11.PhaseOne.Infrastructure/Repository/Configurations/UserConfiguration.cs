@@ -44,34 +44,5 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
             .HasColumnType("BIT")
             .HasDefaultValue(true)
             .IsRequired();
-
-        AddStartingData(builder);
-    }
-
-    private void AddStartingData(EntityTypeBuilder<User> builder)
-    {
-        var userAdmin = new User()
-        {
-            Id =  new Guid("6C511C9F-CAE7-4D08-8101-F8AF7C81357A"),
-            CreatedAt = new DateTime(year:2025, month:1, day:1),
-            UserHandle = "admin",
-            Username = "admin",
-            PasswordHash = "tempPass",
-            Role = UserRole.Admin,
-            IsActive = true
-        };
-        
-        var userClient = new User()
-        {
-            Id = new Guid("4D9C6BD6-821A-40F0-B2B9-64683B5E91E1"),
-            CreatedAt = new DateTime(year:2025, month:1, day:1),
-            UserHandle = "client",
-            Username = "client",
-            PasswordHash = "tempPass",
-            Role = UserRole.Client,
-            IsActive = true
-        };
-        
-        builder.HasData(userAdmin, userClient);
     }
 }

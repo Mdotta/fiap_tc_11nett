@@ -5,6 +5,6 @@ namespace Postech.NETT11.PhaseOne.Application.DTOs.Requests.User;
 public sealed record CreateUserRequest(
     string UserHandle,
     string Username,
-    string Password,
-    UserRole Role
+    string Email,
+    string Password
 );

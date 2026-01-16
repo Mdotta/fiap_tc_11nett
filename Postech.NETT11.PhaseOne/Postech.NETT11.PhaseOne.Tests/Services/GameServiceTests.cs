@@ -42,7 +42,8 @@ public class GameServiceTests
             Description = game.Description,
             Developer = game.Developer,
             Publisher = game.Publisher,
-            Price = game.Price
+            Price = game.Price,
+            ReleaseDate = game.ReleaseDate
         };
         // Act
         var result = await _service.AddGameAsync(request);
@@ -50,6 +51,7 @@ public class GameServiceTests
         // Assert
         result.Should().NotBeNull();
         result.Id.Should().Be(game.Id);
+        result.Should().Be(game);
         _mockRepo.Verify(r => r.AddAsync(It.IsAny<Game>()), Times.Once);
     }
 
@@ -74,7 +76,8 @@ public class GameServiceTests
             Description = "Valid Description",
             Developer = developer,
             Publisher = publisher,
-            Price = 10m
+            Price = 10m,
+            ReleaseDate = DateTime.UtcNow.AddDays(-1)
         };
 
         // Act & Assert
@@ -144,17 +147,19 @@ public class GameServiceTests
         var game = GetValidGame();
         var request = new UpdateGameRequest()
         {
+            Id = gameId,
             Name = "Updated Game",
             Description = game.Description,
             Developer = game.Developer,
             Publisher = game.Publisher,
-            Price = game.Price
+            Price = game.Price,
+            ReleaseDate = game.ReleaseDate
         };
         _mockRepo.Setup(r=>r.GetByIdAsync(gameId)).ReturnsAsync(game);
         _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Game>())).ReturnsAsync(game);
 
         // Act
-        var result = await _service.UpdateGameAsync(gameId,request);
+        var result = await _service.UpdateGameAsync(request);
 
         // Assert
         result.Should().NotBeNull();
@@ -165,11 +170,8 @@ public class GameServiceTests
     [Fact]
     public async Task UpdateGame_WithNullGame_ShouldThrowArgumentNullException()
     {
-        // Arrange
-        var gameId = Guid.CreateVersion7();
-        
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateGameAsync(gameId,null));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _service.UpdateGameAsync(null));
     }
 
     // Delete Tests

@@ -1,6 +1,5 @@
 using Postech.NETT11.PhaseOne.Application.DTOs.Requests;
 using Postech.NETT11.PhaseOne.Application.Services.Interfaces;
-using Postech.NETT11.PhaseOne.Domain.AccessAndAuthorization;
 
 namespace Postech.NETT11.PhaseOne.WebApp.Endpoints;
 
@@ -19,20 +18,23 @@ public class AuthRoute:BaseRoute
             .AllowAnonymous();
     }
 
-    IResult Authenticate(AuthRequest request, IJwtService jwtService, IUserRepository userRepository, IPasswordHasher passwordHasher, ILogger<AuthRoute> logger)
+    private async Task<IResult> Authenticate(
+        HttpContext httpContext,
+        AuthRequest request, 
+        IAuthService authService)
     {
-        logger.LogInformation("Authenticating user: {Username}", request.Username);
-        var hashPass = request.Password;
-        var user = userRepository.GetByCredentials(request.Username, hashPass);
-        if (user == null || !passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
+        var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
+        
+        var authResponse = await authService.AuthenticateAsync(
+            request.Username, 
+            request.Password, 
+            ipAddress);
 
+        if (authResponse == null)
         {
-            logger.LogInformation("User {Username} not found or invalid password", request.Username);
             return TypedResults.Unauthorized();
         }
-        
-        var token = jwtService.GenerateToken(user.Id.ToString(), user.Role.ToString());
 
-        return TypedResults.Ok(token);
+        return TypedResults.Ok(authResponse);
     }
 }

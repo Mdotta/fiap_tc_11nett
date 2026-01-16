@@ -23,6 +23,7 @@ try
         .RegisterRepositories()
         .RegisterDbContext(builder.Configuration);
     
+    // Skip remaining setup during design-time operations
     if (args.Contains("--no-build") || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "DesignTime")
     {
         return;

@@ -12,8 +12,6 @@ public class Game : BaseEntity
     public string Publisher { get; private set; }
     public decimal? Price { get; private set; }
     public GameStatus Status { get; private set; }
-    public DateTime? ReleaseDate { get; private set; }
-    public List<GameCategory> Categories { get; private set; }
 
     private Game() { }
 
@@ -28,7 +26,6 @@ public class Game : BaseEntity
         ValidateAndSetDeveloper(developer);
         ValidateAndSetPublisher(publisher);
         
-        Categories = new List<GameCategory>();
         Status = GameStatus.Active;
     }
     
@@ -45,36 +42,9 @@ public class Game : BaseEntity
         Price = price;
     }
 
-    public void SetReleaseDate(DateTime? releaseDate)
-    {
-        if (releaseDate > DateTime.UtcNow.AddYears(5))
-            throw new DomainException("A data de lançamento não pode ser superior a 5 anos no futuro.");
-        ReleaseDate = releaseDate;
-
-        if (releaseDate < DateTime.UtcNow)
-        {
-            Status = GameStatus.Active;
-        }
-    }
-    
     public void SetStatus(GameStatus status)
     {
         Status = status;
-    }
-
-    private void AddCategory(GameCategory category)
-    {
-        if (!Categories.Contains(category))
-            Categories.Add(category);
-    }
-
-    public void AddCategories(IEnumerable<GameCategory>? categories)
-    {
-        if (categories is null) 
-            return;
-        
-        foreach (var category in categories)
-            AddCategory(category);
     }
 
     // Validações
