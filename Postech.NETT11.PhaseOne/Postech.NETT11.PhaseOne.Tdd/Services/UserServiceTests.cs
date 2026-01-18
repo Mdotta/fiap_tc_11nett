@@ -139,17 +139,14 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetUserById_WithNonExistingId_ShouldReturnNull()
+    public async Task GetUserById_WithNonExistingId_ShouldThrowKeyNotFoundException()
     {
         // Arrange
         var userId = Guid.CreateVersion7();
         _mockRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync((User?)null);
 
-        // Act
-        var result = await _service.GetUserByIdAsync(userId);
-
-        // Assert
-        result.Should().BeNull();
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.GetUserByIdAsync(userId));
         _mockRepo.Verify(r => r.GetByIdAsync(userId), Times.Once);
     }
 
