@@ -1,3 +1,5 @@
+using Postech.NETT11.PhaseOne.Domain.Common;
+
 public class GlobalExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
@@ -55,18 +57,26 @@ public class GlobalExceptionHandlerMiddleware
         await context.Response.WriteAsJsonAsync(problemDetails);
     }
 
-    private (int StatusCode, string Title, string Detail) MapExceptionToResponse(Exception exception)
+    private (int StatusCode, string Title, string? Detail) MapExceptionToResponse(Exception exception)
     {
         return exception switch
         {
             ArgumentNullException or ArgumentException => 
                 (400, "Bad Request", exception.Message),
             
-            KeyNotFoundException or InvalidOperationException => 
+            InvalidOperationException => 
+                (400, "Bad Request", exception.Message),
+            
+            KeyNotFoundException => 
                 (404, "Not Found", exception.Message),
             
             UnauthorizedAccessException => 
-                (403, "Forbidden", "You don't have permission to access this resource"),
+                (403, "Forbidden", string.IsNullOrWhiteSpace(exception.Message) 
+                    ? "You do not have permission to access this resource." 
+                    : exception.Message),
+            
+            DomainException => 
+                (400, "Bad Request", exception.Message),
             
             _ => (500, "Internal Server Error", 
                   _environment.IsDevelopment() 
