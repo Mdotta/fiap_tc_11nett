@@ -14,10 +14,6 @@ public class GameRoute:BaseRoute
         Route = "/game";
     }
 
-    private bool IsAdmin(HttpContext context)
-    {
-        return context.User.IsInRole("Admin");
-    }
     protected override void AddRoute(RouteGroupBuilder group)
     {
         group.MapGet("/", GetAllGames)
@@ -48,18 +44,13 @@ public class GameRoute:BaseRoute
 
     private async Task<NoContent> DeleteGameAsync(Guid id, HttpContext context, IGameService service)
     {
-        if (!IsAdmin(context))
-            throw new UnauthorizedAccessException();
-        
         var deleteResult = await service.DeleteGameAsync(id);
         return TypedResults.NoContent();
     }
 
     private async Task<Ok<GameResponse>> UpdateGameAsync(Guid id, HttpContext context, UpdateGameRequest request, IGameService service)
     {
-        if (!IsAdmin(context))
-            throw new UnauthorizedAccessException();
-        
+    
         var updatedGame = await service.UpdateGameAsync(id,request);
         return TypedResults.Ok(updatedGame);
     }
@@ -83,9 +74,6 @@ public class GameRoute:BaseRoute
 
     private async Task<Ok<GameResponse>> CreateGameAsync(HttpContext context, CreateGameRequest request, IGameService service)
     {
-        if (!IsAdmin(context))
-            throw new UnauthorizedAccessException();
-        
         var newGame = await service.AddGameAsync(request);
         return TypedResults.Ok(newGame);
     }
