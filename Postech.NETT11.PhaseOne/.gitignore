@@ -3,6 +3,3 @@ launch.json
 tasks.json
 .env
 env
-# postech.nett11.phaseone.sln
-appsettings.json
-appsettings.Development.json
