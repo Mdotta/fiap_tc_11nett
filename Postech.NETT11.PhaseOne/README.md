@@ -169,23 +169,26 @@ dotnet test
 ### Autenticação
 
 - `POST /auth/login` - Realizar login e obter token JWT
-- `POST /auth/register` - Registrar novo usuário
 
 ### Usuários
 
-- `GET /users` - Listar todos os usuários (Admin)
-- `GET /users/{id}` - Obter usuário por ID
-- `PUT /users/{id}` - Atualizar usuário
-- `DELETE /users/{id}` - Excluir usuário (Admin)
+- `GET /user/me` - Obter dados do usuário autenticado
+- `GET /user/` - Listar todos os usuários (Admin)
+- `GET /user/{id}` - Obter usuário por ID
+- `POST /user/` - Criar novo usuário (registro)
+- `PUT /user/me` - Atualizar próprio perfil
+- `PUT /user/me/password` - Alterar própria senha
+- `PUT /user/{id}` - Atualizar usuário (Admin)
+- `PUT /user/{id}/reactivate` - Reativar usuário (Admin)
+- `DELETE /user/{id}` - Excluir usuário (Admin)
 
 ### Jogos
 
-- `GET /games` - Listar todos os jogos
-- `GET /games/{id}` - Obter jogo por ID
-- `POST /games` - Criar novo jogo (Admin)
-- `PUT /games/{id}` - Atualizar jogo (Admin)
-- `DELETE /games/{id}` - Excluir jogo (Admin)
-- `PATCH /games/{id}/status` - Atualizar status do jogo (Admin)
+- `GET /game/` - Listar todos os jogos
+- `GET /game/{gameId}` - Obter jogo por ID
+- `POST /game/` - Criar novo jogo (Admin)
+- `PUT /game/{id}` - Atualizar jogo (Admin)
+- `DELETE /game/{id}` - Excluir jogo (Admin)
 
 ---
 
