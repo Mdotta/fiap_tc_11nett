@@ -25,19 +25,13 @@ public class EmailValidatorTests
         error.Should().NotBeNullOrEmpty();
     }
 
-    [Fact]
-    public void Validate_WithDisallowedDomain_ReturnsFalse()
+    [Theory]
+    [InlineData("user@.com")] 
+    [InlineData("user@com")]  
+    [InlineData("user@domain.c")] 
+    public void ValidateAndThrow_WithInvalidEmail_ThrowsArgumentException(string email)
     {
-        var (isValid, error) = EmailValidator.Validate("user@example.io"); // .io is not allowed by the regex
-
-        isValid.Should().BeFalse();
-        error.Should().NotBeNullOrEmpty();
-    }
-
-    [Fact]
-    public void ValidateAndThrow_WithInvalidEmail_ThrowsArgumentException()
-    {
-        Action act = () => EmailValidator.ValidateAndThrow("bad@domain.io");
+        Action act = () => EmailValidator.ValidateAndThrow(email);
 
         act.Should().Throw<ArgumentException>().WithMessage("Email format is invalid or domain is not allowed.");
     }

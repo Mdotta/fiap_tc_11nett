@@ -7,7 +7,7 @@ public static class EmailValidator
 {
     public static (bool IsValid, string? ErrorMessage) Validate(string email)
     {
-        string regex = @"^[^@\s]+@[^@\s]+\.(com|net|org|gov)$";
+        string regex = @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$";
         var isValid = Regex.IsMatch(email, regex, RegexOptions.IgnoreCase);
         if (isValid)
         {

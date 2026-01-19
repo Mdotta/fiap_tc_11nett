@@ -8,7 +8,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY ["Postech.NETT11.PhaseOne.WebApp/Postech.NETT11.PhaseOne.WebApp.csproj", "src/Postech.NETT11.PhaseOne.WebApp/"]
-#COPY ["Postech.NETT11.PhaseOne.Application/Postech.NETT11.PhaseOne.Application.csproj", "src/Postech.NETT11.PhaseOne.Application/"]
+COPY ["Postech.NETT11.PhaseOne.Application/Postech.NETT11.PhaseOne.Application.csproj", "src/Postech.NETT11.PhaseOne.Application/"]
 COPY ["Postech.NETT11.PhaseOne.Domain/Postech.NETT11.PhaseOne.Domain.csproj", "src/Postech.NETT11.PhaseOne.Domain/"]
 COPY ["Postech.NETT11.PhaseOne.Infrastructure/Postech.NETT11.PhaseOne.Infrastructure.csproj", "src/Postech.NETT11.PhaseOne.Infrastructure/"]
 
