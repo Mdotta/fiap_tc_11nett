@@ -44,7 +44,7 @@ public class AuthService : IAuthService
                 username,
                 ipAddress ?? "Unknown");
 
-            var user = await _userRepository.GetByUsername(username);
+            var user = await _userRepository.GetByUsernameIncludingInactiveAsync(username);
             
             if (user == null)
             {
@@ -55,6 +55,18 @@ public class AuthService : IAuthService
                     ipAddress ?? "Unknown",
                     stopwatch.ElapsedMilliseconds);
                 return null;
+            }
+
+            if (!user.IsActive)
+            {
+                stopwatch.Stop();
+                _logger.LogWarning(
+                    "Authentication failed: User account is inactive. UserId: {UserId}, Username: {Username}, IpAddress: {IpAddress}, Duration: {Duration}ms",
+                    user.Id,
+                    username,
+                    ipAddress ?? "Unknown",
+                    stopwatch.ElapsedMilliseconds);
+                throw new UnauthorizedAccessException("User is not active. Contact admin.");
             }
 
             if (!_passwordHasher.VerifyPassword(password, user.PasswordHash))
